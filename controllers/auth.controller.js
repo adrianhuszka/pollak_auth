@@ -10,8 +10,22 @@ router.get("/verify", (req, res) => {
   if (!access_token || !refresh_token)
     res.status(401).json({ message: "Token nem található" });
   else {
-    verifyJwt(access_token, refresh_token);
-    res.status(200).json({ message: "OK" });
+    verifyJwt(access_token, refresh_token)
+      .then((data) => {
+        if (data === "OK") {
+          res.status(200).json({ message: "OK" });
+        } else {
+          res.cookie("access_token", data, {
+            maxAge: 10 * 60 * 1000,
+          });
+          res.status(200).json({ message: "Refreshed" });
+        }
+      })
+      .catch((err) => {
+        res.clearCookie("access_token");
+        res.clearCookie("refresh_token");
+        res.status(403).json({ message: err });
+      });
   }
 });
 
