@@ -1,0 +1,4 @@
+model OM {
+  kod  String @id
+  User User?
+}

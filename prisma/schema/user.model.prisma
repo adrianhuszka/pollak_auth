@@ -1,0 +1,13 @@
+model User {
+  id       String @id @default(uuid())
+  username String @unique
+  password String
+  nev      String
+  email    String @unique
+
+  om      String @unique
+  om_azon OM     @relation(fields: [om], references: [kod])
+
+  Groups     Groups @relation(fields: [groupsNeve], references: [neve])
+  groupsNeve String
+}

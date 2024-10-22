@@ -1,0 +1,4 @@
+model Groups {
+  neve String @id
+  users User[]
+}
