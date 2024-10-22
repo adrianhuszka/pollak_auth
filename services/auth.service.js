@@ -9,7 +9,7 @@ export function verifyJwt(access_token, refresh_token) {
     },
     (err, decoded) => {
       console.log(decoded);
-      console.error(err);
+      console.error(err.message);
     }
   );
 }

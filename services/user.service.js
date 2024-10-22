@@ -44,7 +44,7 @@ export async function login(username, password) {
     },
     "test",
     {
-      expiresIn: "1s",
+      expiresIn: "5m",
       algorithm: "HS512",
     }
   );
