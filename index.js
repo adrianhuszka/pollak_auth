@@ -16,12 +16,17 @@ const corsOptions = {
   credentials: true,
 };
 
+app.set("view engine", "ejs")
 app.use(express.json());
 app.use(cookieParser());
 app.use(cors(corsOptions));
 
 app.use("/user", userController);
 app.use("/auth", authController);
+
+app.get("/",(req,res) =>{
+  res.render("index")
+})
 
 app.listen(3300, () => {
   console.log("http://localhost:3300");
