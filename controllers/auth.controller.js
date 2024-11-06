@@ -1,5 +1,6 @@
 import express from "express";
-import { verifyJwt } from "../services/auth.service.js";
+
+import { verifyJwt, updateMainData} from "../services/auth.service.js";
 
 const router = express.Router();
 
@@ -28,5 +29,15 @@ router.get("/verify", (req, res) => {
       });
   }
 });
+
+router.put("/update", async (req, res) => {
+  const { JWTAlgorithm, JWTExpiration, JWTSecret, RefreshTokenAlgorithm, RefreshTokenExpiration, RefreshTokenSecret} = req.body
+
+  await updateMainData(JWTAlgorithm, JWTExpiration, JWTSecret, RefreshTokenAlgorithm, RefreshTokenExpiration, RefreshTokenSecret)
+
+  res.status(200).json({
+    message: "Data successfully updated"
+  })
+})
 
 export { router as authController };

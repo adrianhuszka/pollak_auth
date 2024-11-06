@@ -76,3 +76,25 @@ async function createNewToken(id, nev, email, groupsNeve) {
     }
   );
 }
+
+
+export async function updateMainData(JWTAlgorithm, JWTExpiration, JWTSecret, RefreshTokenAlgorithm, RefreshTokenExpiration, RefreshTokenSecret) {
+  try {
+  await prisma.maindata.update({
+    where: {
+      id: 1
+    },
+    data: {
+      JWTAlgorithm: JWTAlgorithm,
+      JWTExpiration: JWTExpiration,
+      JWTSecret: JWTSecret,
+      RefreshTokenAlgorithm: RefreshTokenAlgorithm,
+      RefreshTokenExpiration: RefreshTokenExpiration,
+      RefreshTokenSecret: RefreshTokenSecret
+    }
+    })
+    return "ok"
+  } catch(err) {
+    return null
+  }
+}
