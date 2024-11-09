@@ -17,6 +17,7 @@ ENV NODE_ENV=production
 COPY --chown=node:node . .
 
 RUN npx prisma generate
+RUN npx prisma migrate dev --create-only
 RUN npm ci --only=production
 
 EXPOSE 3300
