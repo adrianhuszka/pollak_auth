@@ -1,33 +1,21 @@
-# Build stage
-FROM node:22.11.0-alpine3.20
+FROM node:22.11.0-alpine
 
-#INATALL NGINX AND SUPERVISOR
-RUN apk update
-RUN apk add nginx
-RUN apk add supervisor
+RUN mkdir -p /home/node/app/node_modules && chown -R node:node /home/node/app
 
-#REPPLACE NGINX DEFAULT WITH YOUR CODE
-RUN rm -f /etc/nginx/http.d/default.conf
-ADD ./docker/nginx/http.d/default.conf /etc/nginx/http.d/default.conf
-
-#COPY YOUR SUPERVISOR CONFIG FILES INSIDE SUPERVISOR FOLDER
-COPY ./docker/supervisord.conf /etc/supervisor/supervisord.conf
-COPY ./docker/supervisor.conf /etc/supervisor/conf.d/supervisor.conf
-
-#MAKE WORKING DIRECTORY AND LOGS DIRECTORY
-RUN mkdir -p /home/www/node/node_modules && chown -R node:node /home/www/node
-RUN mkdir -p /var/log/supervisor && chown -R node:node /var/log/supervisor
-
-#INSTALL AND RUN NPM 
-
-WORKDIR /home/www/node
+WORKDIR /home/node/app
 
 COPY package*.json ./
 
+USER node
+
 RUN npm install
+RUN npx prisma generate
 RUN npm ci --only=production
 
-COPY --chown=node:node . ./
+ENV NODE_ENV=production
+
+COPY --chown=node:node . .
 
 EXPOSE 3300
-CMD ["/usr/bin/supervisord", "-n", "-c", "/etc/supervisor/supervisord.conf"]
+
+CMD [ "node", "app.js" ]
