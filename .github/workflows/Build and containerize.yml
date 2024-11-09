@@ -39,10 +39,10 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           context: .
-          platforms: linux/amd64,linux/arm64
+          platforms: ${{ matrix.platform }}
           file: ./Dockerfile
           push: true
-          tags: ghcr.io/12szf2/pollak-idopontfoglalo/app:latest
+          tags: ghcr.io/pollak-projects/pollak_auth/app:latest
   # triggerUpdate:
   #   name: Trigger Update
   #   runs-on: ubuntu-latest
