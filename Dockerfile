@@ -11,13 +11,14 @@ RUN chown -R node:node /home/node/app
 USER node
 
 RUN npm install
-RUN npx prisma generate
-RUN npm ci --only=production
 
 ENV NODE_ENV=production
 
 COPY --chown=node:node . .
 
+RUN npx prisma generate
+RUN npm ci --only=production
+
 EXPOSE 3300
 
-CMD [ "node", "app.js" ]
+CMD [ "node", "index.js" ]
