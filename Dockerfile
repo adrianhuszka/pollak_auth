@@ -1,20 +1,29 @@
 # Build stage
-FROM node:22 AS build
-RUN apt-get update && apt-get install -y libc6
-WORKDIR /app  # Temporarily use /app for the build
-COPY package*.json . 
+FROM node:lts-alpine3.20 AS build
+
+WORKDIR /
+
+COPY package*.json .
+
 RUN npm install
+
 COPY . .
+
 RUN npx prisma generate
 RUN npm run build
 
 # Production stage
-FROM node:22 AS production
+FROM node:lts-alpine3.20 AS production
+
 WORKDIR /
+
 COPY package*.json . 
+
 RUN npm ci --only=production
-COPY --from=build /app/node_modules/.prisma ./node_modules/.prisma
-COPY --from=build /app/prisma ./prisma
+
+# Copy the generated Prisma Client and schema from the build stage
+COPY --from=build /app/node_modules/.prisma /app/node_modules/.prisma
+COPY --from=build /app/prisma /app/prisma
 COPY --from=build /app/dist ./dist
-RUN mkdir -p /static/images
-CMD ["node", "dist/app.js"]
+
+CMD ["node", "dist/index.js"]
