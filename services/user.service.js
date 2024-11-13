@@ -112,10 +112,8 @@ export async function userDelete(id) {
 }
 
 
-export async function Groups(id) {
-  await prisma.groups.findMany ({
-   where: {
-     neve:neve,
-   },
- });
+export async function Groups() {
+  const groups = await prisma.groups.findMany();
+
+  return groups
 }

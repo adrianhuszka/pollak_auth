@@ -89,20 +89,9 @@ router.delete("/delete", async (req, res) => {
 });
 
 router.get("/getGroups", async (req, res) => {
-const {  } = req.body;
 try {
   const groups = await Groups();
-  res.status(200).json(user);
-} catch (error) {
-  res.status(400).json(error.message);
-}
-});
-
-router.get("/getGroups", async (req, res) => {
-const {  } = req.body;
-try {
-  const groups = await Groups();
-  res.status(200).json(user);
+  res.status(200).json(groups); 
 } catch (error) {
   res.status(400).json(error.message);
 }
