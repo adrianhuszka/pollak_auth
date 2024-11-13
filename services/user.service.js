@@ -27,11 +27,15 @@ export async function GetAllUsers() {
 }
 
 export async function login(username, password) {
-  const user = await prisma.user.findUnique({
-    where: {
-      username: username,
-    },
-  });
+  const user = await prisma.user
+    .findUnique({
+      where: {
+        username: username,
+      },
+    })
+    .catch((error) => {
+      return { message: error.message };
+    });
 
   if (!user) {
     return { message: "Hibás felhasználónév vagy jelszó" };

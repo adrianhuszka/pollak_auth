@@ -1,12 +1,16 @@
 import jwt from "jsonwebtoken";
+import { PrismaClient } from "@prisma/client";
 
-export function verifyJwt(access_token, refresh_token) {
+const prisma = new PrismaClient();
+
+export async function verifyJwt(access_token, refresh_token) {
+  const data = await prisma.maindata.findFirst()
   return new Promise((resolve, reject) => {
     jwt.verify(
       access_token,
-      "test",
+      data.JWTSecret,
       {
-        algorithm: "HS512",
+        algorithm: data.JWTAlgorithm,
       },
       (err, decoded) => {
         console.log(decoded);
@@ -14,7 +18,7 @@ export function verifyJwt(access_token, refresh_token) {
 
         if (decoded) resolve("OK");
 
-        if (err && err.message === "jwt expired") {
+        if (err && err.message === data.JWTExpiration) {
           const ref = verifyRefreshToken(refresh_token);
           const tokenWithIgnore = verifyWithIgnoreExpiration(access_token);
 
@@ -29,10 +33,11 @@ export function verifyJwt(access_token, refresh_token) {
   });
 }
 
-function verifyRefreshToken(refresh_token) {
+async function verifyRefreshToken(refresh_token) {
+  const data = await prisma.maindata.findFirst()
   let ret;
   try {
-    ret = jwt.verify(refresh_token, "test", { algorithm: "HS512" });
+    ret = jwt.verify(refresh_token, data.RefreshTokenSecret, { algorithm:  data.RefreshTokenAlgorithm });
   } catch (err) {
     ret = null;
   }
@@ -40,11 +45,12 @@ function verifyRefreshToken(refresh_token) {
   return ret;
 }
 
-function verifyWithIgnoreExpiration(token) {
+async function verifyWithIgnoreExpiration(token) {
+  const data = await prisma.maindata.findFirst()
   let ret;
   try {
-    ret = jwt.verify(token, "test", {
-      algorithm: "HS512",
+    ret = jwt.verify(token, data.JWTExpiration, {
+      algorithm: data.RefreshTokenExpiration,
       ignoreExpiration: true,
     });
   } catch (err) {
@@ -54,7 +60,8 @@ function verifyWithIgnoreExpiration(token) {
   return ret;
 }
 
-function createNewToken(id, nev, email, groupsNeve) {
+async function createNewToken(id, nev, email, groupsNeve) {
+  const data = await prisma.maindata.findFirst()
   return jwt.sign(
     {
       sub: id,
@@ -62,10 +69,32 @@ function createNewToken(id, nev, email, groupsNeve) {
       email: email,
       userGroup: groupsNeve,
     },
-    "test",
+    data.JWTSecret,
     {
-      expiresIn: "5m",
-      algorithm: "HS512",
+      expiresIn: data.JWTExpiration,
+      algorithm: data.JWTAlgorithm,
     }
   );
+}
+
+
+export async function updateMainData(JWTAlgorithm, JWTExpiration, JWTSecret, RefreshTokenAlgorithm, RefreshTokenExpiration, RefreshTokenSecret) {
+  try {
+  await prisma.maindata.update({
+    where: {
+      id: 1
+    },
+    data: {
+      JWTAlgorithm: JWTAlgorithm,
+      JWTExpiration: JWTExpiration,
+      JWTSecret: JWTSecret,
+      RefreshTokenAlgorithm: RefreshTokenAlgorithm,
+      RefreshTokenExpiration: RefreshTokenExpiration,
+      RefreshTokenSecret: RefreshTokenSecret
+    }
+    })
+    return "ok"
+  } catch(err) {
+    return null
+  }
 }

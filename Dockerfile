@@ -1,33 +1,24 @@
-# Build stage
-FROM node:22 AS build
+FROM node:22.11.0-alpine
 
-RUN apt-get update && apt-get install -y libc6
+RUN mkdir -p /home/node/app/node_modules && chown -R node:node /home/node/app
 
-WORKDIR .
+WORKDIR /home/node/app
 
-COPY package*.json . 
+COPY package*.json ./
+
+RUN chown -R node:node /home/node/app
+
+USER node
 
 RUN npm install
 
-COPY . .
+ENV NODE_ENV=production
+
+COPY --chown=node:node . .
 
 RUN npx prisma generate
-RUN npm run build
-
-# Production stage
-FROM node:22 AS production
-
-WORKDIR .
-
-COPY package*.json . 
-
 RUN npm ci --only=production
 
-COPY --from=build /node_modules/.prisma ./node_modules/.prisma
-COPY --from=build /prisma ./prisma
-COPY --from=build /dist ./dist
+EXPOSE 3300
 
-# Create static/images folder
-RUN mkdir -p /static/images
-
-CMD ["node", "dist/app.js"]
+CMD [ "node", "index.js" ]

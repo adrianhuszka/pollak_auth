@@ -6,18 +6,15 @@ on:
 
 jobs:
   build:
-    name: Build Docker
+    name: Build Docker Image 🏗️
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        platform:
-          - linux/amd64
-          - linux/arm64
 
     steps:
       - name: Check out repository code 🛎️
         uses: actions/checkout@v4
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
 
       - name: Set up Docker Buildx 🚀
         uses: docker/setup-buildx-action@v3
@@ -26,23 +23,26 @@ jobs:
         uses: docker/login-action@v2
         with:
           registry: ghcr.io
-          username: adrianhuszka
+          username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build and push 🏗️
         uses: docker/build-push-action@v3
         with:
           context: .
-          platforms: ${{ matrix.platform }}
+          platforms: linux/amd64
           file: ./Dockerfile
           push: true
-          tags: ghcr.io/12szf2/pollak-idopontfoglalo/app:latest
-  # triggerUpdate:
-  #   name: Trigger Update
-  #   runs-on: ubuntu-latest
-  #   needs: build
-  #   steps:
-  #     - name: Call Webhook
-  #       uses: distributhor/workflow-webhook@v3
-  #       with:
-  #         webhook_url: ${{ secrets.WEBHOOK_URL }}
+          tags: ghcr.io/pollak-projects/pollak_auth/app:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  triggerUpdate:
+    name: Trigger Update 🔄
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Call Webhook
+        uses: distributhor/workflow-webhook@v3
+        with:
+          webhook_url: ${{ secrets.WEBHOOK_URL }}
