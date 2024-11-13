@@ -6,6 +6,7 @@ import { authController } from "./controllers/auth.controller.js";
 import { GetAllUsers, Groups } from "./services/user.service.js";
 import { groupController } from "./controllers/group.controller.js";
 import { listAllGroup } from "./services/group.service.js"
+import { listAllTokens } from "./services/auth.service.js";
 
 const app = express();
 
@@ -58,6 +59,12 @@ app.get("/groups", async (req, res) => {
 
 app.get("/",(req,res) =>{
   res.render("index")
+})
+
+app.get("/token",async (req,res) =>{
+  res.render("token", {
+    tokenData: await listAllTokens()
+  })
 })
 
 app.listen(3300, () => {
