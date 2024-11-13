@@ -9,6 +9,8 @@ import {
   forgotPassword,
   userUpdate,
   userDelete,
+  GetAllUsers,
+  Groups,
 } from "../services/user.service.js";
 
 const router = express.Router();
@@ -24,9 +26,19 @@ router.post("/register", async (req, res) => {
   }
 });
 
+router.get("/getAll", async (req, res) => {
+  try {
+    const users = await GetAllUsers();
+    res.status(201).json(users);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+})
+
 // bejelentkezés
 router.post("/login", async (req, res) => {
   const { username, password } = req.body;
+
   try {
     const user = await login(username, password);
 
@@ -36,7 +48,7 @@ router.post("/login", async (req, res) => {
       httpOnly: true,
     });
 
-    res.status(200).json({ message: "Sikeres bejelentkezés" });
+    res.status(200).json( user);
   } catch (error) {
     res.status(400).json(JSON.parse(error.message));
   }
@@ -55,9 +67,9 @@ router.get("/forgot-password", async (req, res) => {
 
 // név és email változtatás
 router.put("/update", async (req, res) => {
-  const { id, nev, email } = req.body;
+  const { id, username, email } = req.body;
   try {
-    const user = await userUpdate(id, nev, email);
+    const user = await userUpdate(id, username, email);
     res.status(200).json(user);
   } catch (error) {
     res.status(400).json({ message: error.message });
@@ -73,6 +85,16 @@ router.delete("/delete", async (req, res) => {
   } catch (error) {
     res.status(400).json(error.message);
   }
+});
+
+router.get("/getGroups", async (req, res) => {
+const {  } = req.body;
+try {
+  const groups = await Groups();
+  res.status(200).json(user);
+} catch (error) {
+  res.status(400).json(error.message);
+}
 });
 
 export { router as userController };

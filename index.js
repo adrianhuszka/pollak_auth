@@ -3,6 +3,7 @@ import cookieParser from "cookie-parser";
 import cors from "cors";
 import { userController } from "./controllers/user.controller.js";
 import { authController } from "./controllers/auth.controller.js";
+import { GetAllUsers, Groups } from "./services/user.service.js";
 
 const app = express();
 
@@ -19,6 +20,27 @@ const corsOptions = {
 app.use(express.json());
 app.use(cookieParser());
 app.use(cors(corsOptions));
+app.set("view engine", "ejs")
+app.use("/user", userController)
+
+
+
+
+app.get("/", async (req, res) => {
+  res.render("index", {
+
+  })
+})
+
+app.get("/table", async (req, res) => {
+  const userData = await GetAllUsers();
+  const groupsData = await Groups();
+  res.render("table", {
+    users: userData,
+    groups: groupsData
+    
+  })
+})
 
 app.use("/user", userController);
 app.use("/auth", authController);
