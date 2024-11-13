@@ -1,6 +1,6 @@
 import express from "express";
 
-import { verifyJwt, updateMainData} from "../services/auth.service.js";
+import { verifyJwt, updateMainData, listAllTokens} from "../services/auth.service.js";
 
 const router = express.Router();
 
@@ -33,11 +33,21 @@ router.get("/verify", (req, res) => {
 router.put("/update", async (req, res) => {
   const { JWTAlgorithm, JWTExpiration, JWTSecret, RefreshTokenAlgorithm, RefreshTokenExpiration, RefreshTokenSecret} = req.body
 
-  await updateMainData(JWTAlgorithm, JWTExpiration, JWTSecret, RefreshTokenAlgorithm, RefreshTokenExpiration, RefreshTokenSecret)
+  const asd = await updateMainData(JWTAlgorithm, JWTExpiration, JWTSecret, RefreshTokenAlgorithm, RefreshTokenExpiration, RefreshTokenSecret)
 
   res.status(200).json({
-    message: "Data successfully updated"
+    message: asd
   })
-})
+});
+
+router.get("/token", async (req, res) => {
+  try {
+    const data = await listAllTokens();
+    res.status(200).json(data)
+  } catch (err) {
+    console.error("Error fetching token data:", err);
+    res.status(500).send("Error loading token settings");
+  }
+});
 
 export { router as authController };

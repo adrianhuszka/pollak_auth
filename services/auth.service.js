@@ -72,7 +72,7 @@ async function createNewToken(id, nev, email, groupsNeve) {
     data.JWTSecret,
     {
       expiresIn: data.JWTExpiration,
-      algorithm: data.JWTAlgorithm,
+      algorithm: "HS512",
     }
   );
 }
@@ -82,19 +82,30 @@ export async function updateMainData(JWTAlgorithm, JWTExpiration, JWTSecret, Ref
   try {
   await prisma.maindata.update({
     where: {
-      id: 1
+      id: "5a97ea0a-a19f-11ef-95f3-0a0027000007"
+
     },
     data: {
       JWTAlgorithm: JWTAlgorithm,
-      JWTExpiration: JWTExpiration,
+      JWTExpiration: Number(JWTExpiration),
       JWTSecret: JWTSecret,
       RefreshTokenAlgorithm: RefreshTokenAlgorithm,
-      RefreshTokenExpiration: RefreshTokenExpiration,
+      RefreshTokenExpiration: Number(RefreshTokenExpiration),
       RefreshTokenSecret: RefreshTokenSecret
     }
     })
-    return "ok"
+    return "az adat sikeresen frissítve"
   } catch(err) {
-    return null
+    return err
   }
+}
+
+export async function listAllTokens() {
+  const data = await prisma.maindata.findUnique({
+    where: {
+      id: "5a97ea0a-a19f-11ef-95f3-0a0027000007"
+    }
+  });
+
+  return data;
 }
