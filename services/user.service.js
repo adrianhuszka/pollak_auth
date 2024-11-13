@@ -20,12 +20,22 @@ export async function register(username, email, password, nev, om, groupsNeve) {
   });
 }
 
+export async function GetAllUsers() {
+  const users = await prisma.user.findMany()
+
+  return users;
+}
+
 export async function login(username, password) {
-  const user = await prisma.user.findUnique({
-    where: {
-      username: username,
-    },
-  });
+  const user = await prisma.user
+    .findUnique({
+      where: {
+        username: username,
+      },
+    })
+    .catch((error) => {
+      return { message: error.message };
+    });
 
   if (!user) {
     return { message: "Hibás felhasználónév vagy jelszó" };
@@ -87,16 +97,25 @@ export async function userUpdate(id, nev, email) {
       id: id,
     },
     data: {
-      nev: nev,
+      username: nev,
       email: email,
     },
   });
 }
 
 export async function userDelete(id) {
-  return await prisma.user.delete({
+   await prisma.user.delete({
     where: {
       id: id,
     },
   });
+}
+
+
+export async function Groups(id) {
+  await prisma.groups.findMany ({
+   where: {
+     neve:neve,
+   },
+ });
 }
