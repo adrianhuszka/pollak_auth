@@ -14,6 +14,7 @@ const corsOptions = {
   origin: [
     "http://localhost:5173",
     "https://pollak.info",
+    "https://auth.pollak.info",
     "/^https://[0-9A-Za-z]+.pollak.info$/",
   ],
   optionsSuccessStatus: 200,

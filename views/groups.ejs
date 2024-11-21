@@ -164,7 +164,7 @@
         function letrehozas() {
             const csopinev = document.getElementById("csoportnev");
 
-            fetch(`http://localhost:3300/group/add`, {
+            fetch(`/group/add`, {
                 headers: {
                     'Content-Type': 'application/json'
                 },
@@ -180,7 +180,7 @@
         function torles() {
             const csopinev = document.getElementById("torlendo");
 
-            fetch(`http://localhost:3300/group/delete`, {
+            fetch(`/group/delete`, {
                 headers: {
                     'Content-Type': 'application/json'
                 },
@@ -197,7 +197,7 @@
             const modositandoCsopi = document.getElementById("modositando");
             const csopiUjnev = document.getElementById("ujnev");
 
-            fetch(`http://localhost:3300/group/update`, {
+            fetch(`/group/update`, {
                 headers: {
                     'Content-Type': 'application/json'
                 },
