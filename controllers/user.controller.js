@@ -34,7 +34,7 @@ router.get("/getAll", async (req, res) => {
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
-})
+});
 
 // bejelentkezés
 router.post("/login", async (req, res) => {
@@ -49,9 +49,9 @@ router.post("/login", async (req, res) => {
       httpOnly: true,
     });
 
-    res.status(200).json( user);
+    res.status(200).json(user);
   } catch (error) {
-    res.status(400).json(JSON.parse(error.message));
+    res.status(400).json({ message: error.message });
   }
 });
 
@@ -89,12 +89,12 @@ router.delete("/delete", async (req, res) => {
 });
 
 router.get("/getGroups", async (req, res) => {
-try {
-  const groups = await Groups();
-  res.status(200).json(groups); 
-} catch (error) {
-  res.status(400).json(error.message);
-}
+  try {
+    const groups = await Groups();
+    res.status(200).json(groups);
+  } catch (error) {
+    res.status(400).json(error.message);
+  }
 });
 
 router.post("/send-email", async (req, res) => {
@@ -126,12 +126,10 @@ router.post("/send-email", async (req, res) => {
   } catch (err) {
     // Handle errors and log them.
     console.error("Error sending email:", err);
-    res
-      .status(500)
-      .json({
-        status: "error",
-        message: "Error sending email, please try again.",
-      });
+    res.status(500).json({
+      status: "error",
+      message: "Error sending email, please try again.",
+    });
   }
 });
 
