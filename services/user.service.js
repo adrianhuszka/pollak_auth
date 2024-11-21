@@ -21,7 +21,7 @@ export async function register(username, email, password, nev, om, groupsNeve) {
 }
 
 export async function GetAllUsers() {
-  const users = await prisma.user.findMany()
+  const users = await prisma.user.findMany();
 
   return users;
 }
@@ -34,7 +34,7 @@ export async function login(username, password) {
       },
     })
     .catch((error) => {
-      return { message: error.message };
+      return error.message;
     });
 
   if (!user) {
@@ -104,16 +104,15 @@ export async function userUpdate(id, nev, email) {
 }
 
 export async function userDelete(id) {
-   await prisma.user.delete({
+  await prisma.user.delete({
     where: {
       id: id,
     },
   });
 }
 
-
 export async function Groups() {
   const groups = await prisma.groups.findMany();
 
-  return groups
+  return groups;
 }
