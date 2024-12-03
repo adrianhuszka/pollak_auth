@@ -37,6 +37,8 @@ export async function login(username, password) {
       return error.message;
     });
 
+  console.log("user", user);
+
   if (!user) {
     return { message: "Hibás felhasználónév vagy jelszó" };
   }
@@ -69,6 +71,9 @@ export async function login(username, password) {
       algorithm: "HS512",
     }
   );
+
+  console.log("token", token);
+  console.log("refreshToken", refreshToken);
 
   return {
     access_token: token,
