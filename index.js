@@ -12,7 +12,6 @@ const app = express();
 app.set("view engine", "ejs");
 app.use(express.json());
 app.use(cookieParser());
-app.use(cors(corsOptions));
 app.set("view engine", "ejs");
 app.use("/user", userController);
 
