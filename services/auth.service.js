@@ -1,7 +1,8 @@
-import jwt from "jsonwebtoken";
 import { PrismaClient } from "@prisma/client";
 import crypto from "crypto";
-import { encrypt } from "../lib/hash";
+import { encrypt } from "../lib/hash.js";
+import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
 
 const prisma = new PrismaClient();
 
@@ -39,6 +40,9 @@ async function verifyRefreshToken(refresh_token) {
   const data = await prisma.maindata.findFirst();
   let ret;
   try {
+    ret = jwt.verify(refresh_token, data.RefreshTokenSecret, {
+      algorithm: data.RefreshTokenAlgorithm,
+    });
     ret = jwt.verify(refresh_token, data.RefreshTokenSecret, {
       algorithm: data.RefreshTokenAlgorithm,
     });
@@ -81,13 +85,90 @@ async function createNewToken(id, nev, email, groupsNeve) {
   );
 }
 
+export async function register(username, email, password, nev, om, groupsNeve) {
+  const pwdEncrypted = await encrypt(password);
+
+  await prisma.user.create({
+    data: {
+      username: username,
+      email: email,
+      password: pwdEncrypted,
+      nev: nev,
+      om: om,
+      groupsNeve: groupsNeve,
+    },
+  });
+}
+export async function login(username, password) {
+  const user = await prisma.user
+    .findUnique({
+      where: {
+        username: username,
+      },
+    })
+    .catch((error) => {
+      return error.message;
+    });
+
+  console.log("user", user);
+
+  if (!user) {
+    return { message: "Hibás felhasználónév vagy jelszó" };
+  }
+
+  if (!(await bcrypt.compare(password, user.password))) {
+    return { message: "Hibás felhasználónév vagy jelszó" };
+  }
+
+  const token = jwt.sign(
+    {
+      sub: user.id,
+      name: user.nev,
+      email: user.email,
+      userGroup: user.groupsNeve,
+    },
+    "test",
+    {
+      expiresIn: "1s",
+      algorithm: "HS512",
+    }
+  );
+
+  const refreshToken = jwt.sign(
+    {
+      sub: user.id,
+    },
+    "test",
+    {
+      expiresIn: "1h",
+      algorithm: "HS512",
+    }
+  );
+
+  console.log("token", token);
+  console.log("refreshToken", refreshToken);
+
+  return {
+    user_id : user.id,
+    access_token: token,
+    refresh_token: refreshToken,
+  };
+}
+
 export async function updateMainData(
+  
   JWTAlgorithm,
+ 
   JWTExpiration,
+ 
   JWTSecret,
+ 
   RefreshTokenAlgorithm,
+ 
   RefreshTokenExpiration,
+ 
   RefreshTokenSecret
+
 ) {
   try {
     await prisma.maindata.update({

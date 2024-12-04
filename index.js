@@ -9,6 +9,7 @@ import { listAllTokens } from "./services/auth.service.js";
 import cors from "cors";
 import { verifyUserGroups } from "./middleware/auth.middleware.js";
 
+
 const app = express();
 
 const corsOptions = {
@@ -19,6 +20,12 @@ const corsOptions = {
   ],
   optionsSuccessStatus: 200,
 };
+
+app.use(cors(corsOptions));
+
+
+app.use(cors(corsOptions));
+
 
 app.use(cors(corsOptions));
 app.set("view engine", "ejs");

@@ -5,8 +5,6 @@
 import express from "express";
 import { transporter } from "../services/emailsender.js";
 import {
-  register,
-  login,
   forgotPassword,
   userUpdate,
   userDelete,
@@ -16,16 +14,7 @@ import {
 
 const router = express.Router();
 
-// regisztráció
-router.post("/register", async (req, res) => {
-  const { username, email, password, nev, om, groupsNeve } = req.body;
-  try {
-    const user = await register(username, email, password, nev, om, groupsNeve);
-    res.status(201).json(user);
-  } catch (error) {
-    res.status(400).json({ message: error.message });
-  }
-});
+
 
 router.get("/getAll", async (req, res) => {
   try {
@@ -37,25 +26,6 @@ router.get("/getAll", async (req, res) => {
 });
 
 // bejelentkezés
-router.post("/login", async (req, res) => {
-  const { username, password } = req.body;
-
-  console.log(username, password);
-
-  try {
-    const user = await login(username, password);
-
-    res.cookie("access_token", user.access_token, { maxAge: 10 * 60 * 1000 });
-    res.cookie("refresh_token", user.refresh_token, {
-      maxAge: 90 * 60 * 1000,
-      httpOnly: true,
-    });
-
-    res.status(200).json(user);
-  } catch (error) {
-    res.status(400).json({ message: error.message });
-  }
-});
 
 // jelszó visszaállítás
 router.get("/forgot-password", async (req, res) => {

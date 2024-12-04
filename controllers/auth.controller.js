@@ -5,6 +5,8 @@ import {
   updateMainData,
   listAllTokens,
   pwdChange,
+  login,
+  register
 } from "../services/auth.service.js";
 
 const router = express.Router();
@@ -12,6 +14,8 @@ const router = express.Router();
 router.get("/verify", (req, res) => {
   const access_token = req.cookies.access_token;
   const refresh_token = req.cookies.refresh_token;
+
+  
 
   if (!access_token || !refresh_token)
     res.status(401).json({ message: "Token nem található" });
@@ -34,6 +38,37 @@ router.get("/verify", (req, res) => {
       });
   }
 });
+
+router.post("/register", async (req, res) => {
+  const { username, email, password, nev, om, groupsNeve } = req.body;
+  try {
+    const user = await register(username, email, password, nev, om, groupsNeve);
+    res.status(201).json(user);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+});
+
+router.post("/login", async (req, res) => {
+  const { username, password } = req.body;
+
+  console.log(username, password);
+
+  try {
+    const user = await login(username, password);
+
+    res.cookie("access_token", user.access_token, { maxAge: 10 * 60 * 1000 });
+    res.cookie("refresh_token", user.refresh_token, {
+      maxAge: 90 * 60 * 1000,
+      httpOnly: true,
+    });
+
+    res.status(200).json(user);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+});
+
 
 router.put("/update", async (req, res) => {
   const {

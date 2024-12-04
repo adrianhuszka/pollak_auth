@@ -5,20 +5,7 @@ import jwt from "jsonwebtoken";
 
 const prisma = new PrismaClient();
 
-export async function register(username, email, password, nev, om, groupsNeve) {
-  const pwdEncrypted = await encrypt(password);
 
-  await prisma.user.create({
-    data: {
-      username: username,
-      email: email,
-      password: pwdEncrypted,
-      nev: nev,
-      om: om,
-      groupsNeve: groupsNeve,
-    },
-  });
-}
 
 export async function GetAllUsers() {
   const users = await prisma.user.findMany();
@@ -26,60 +13,6 @@ export async function GetAllUsers() {
   return users;
 }
 
-export async function login(username, password) {
-  const user = await prisma.user
-    .findUnique({
-      where: {
-        username: username,
-      },
-    })
-    .catch((error) => {
-      return error.message;
-    });
-
-  console.log("user", user);
-
-  if (!user) {
-    return { message: "Hibás felhasználónév vagy jelszó" };
-  }
-
-  if (!(await bcrypt.compare(password, user.password))) {
-    return { message: "Hibás felhasználónév vagy jelszó" };
-  }
-
-  const token = jwt.sign(
-    {
-      sub: user.id,
-      name: user.nev,
-      email: user.email,
-      userGroup: user.groupsNeve,
-    },
-    "test",
-    {
-      expiresIn: "1s",
-      algorithm: "HS512",
-    }
-  );
-
-  const refreshToken = jwt.sign(
-    {
-      sub: user.id,
-    },
-    "test",
-    {
-      expiresIn: "1h",
-      algorithm: "HS512",
-    }
-  );
-
-  console.log("token", token);
-  console.log("refreshToken", refreshToken);
-
-  return {
-    access_token: token,
-    refresh_token: refreshToken,
-  };
-}
 
 export async function forgotPassword(id) {
   const newPwd = Math.random().toString(36).slice(-8);
