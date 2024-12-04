@@ -33,6 +33,7 @@ app.set("view engine", "ejs");
 app.use("/user", verifyUserGroups(["ADMIN", "USER"]), userController);
 app.use("/auth", authController);
 app.use("/group", verifyUserGroups(["ADMIN"]), groupController);
+app.use("/static", express.static("public"));
 
 app.get("/", async (req, res) => {
   res.render("index", {});

@@ -68,7 +68,7 @@ router.get("/getGroups", async (req, res) => {
     res.status(400).json(error.message);
   }
 });
-
+/*
 router.post("/send-email", async (req, res) => {
   try {
     const { id, nev, subject, email, message } = req.body; // Destructure and retrieve data from request body.
@@ -104,5 +104,5 @@ router.post("/send-email", async (req, res) => {
     });
   }
 });
-
+*/
 export { router as userController };
