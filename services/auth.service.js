@@ -99,6 +99,7 @@ export async function register(username, email, password, nev, om, groupsNeve) {
   });
 }
 export async function login(username, password) {
+  console.log("In service", username, password);
   const user = await prisma.user
     .findUnique({
       where: {
