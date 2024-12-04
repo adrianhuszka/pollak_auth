@@ -7,29 +7,38 @@
     <title>Best Register Site</title>
 </head>
 <body>
-    <div class="container-fluid h-100 d-flex justify-content-center align-items-center flex-column">
-        <h3>Registration</h3>
-        <div class="negyzet d-flex justify-content-center align-items-center flex-column">
-            <div class="mb-3 ">
-                <input type="text" id="name" placeholder="Vezetéknév"/>
-            </div>
-            <div class="mb-3 ">
-                <input type="text" id="email" placeholder="email"/>
-            </div>
-            <div class="mb-3 ">
-                <input type="text" id="username" placeholder="Username"/>
-            </div>
-            <div class="mb-3 ">
-                <input type="text" id="om" placeholder="Om"/>
-            </div>
-            <div class="mb-3 ">
-                <input type="password" id="password" placeholder="Password"/>
-            </div>
-                <input type="password" id="password2" placeholder="Password"/>
-           
-            <div class="mt-3 d-flex justify-content-center align-items-center flex-column ">
-            <button class="btn btn-success" onclick="Register()">Register</button>
-            </div>
+    <body class="text-light"></body>
+    <div
+      class="container d-flex justify-content-center align-items-center min-vh-100"
+    >
+      <div class="card p-4 shadow-lg" style="width: 350px">
+        <h3 class="text-center mb-4">Register</h3>
+        <div class="mb-3">
+          <input type="text" id="name" class="form-control" placeholder="Vezetéknév"/>
+        </div>
+        <div class="mb-3">
+          <input type="text" id="email" class="form-control" placeholder="Email" />
+        </div>
+        <div class="mb-3">
+          <input type="text" id="username" class="form-control" placeholder="Username" />
+        </div>
+        <div class="mb-3">
+          <input type="text" id="om" class="form-control" placeholder="OM azonosító" />
+        </div>
+        <div class="mb-3">
+          <input type="text" id="password" class="form-control" placeholder="Jelszó" />
+        </div>
+        <div class="mb-3">
+          <input type="text" id="password2" class="form-control" placeholder="Jelszó mégegyszer" />
+        </div>
+        <div class="d-flex justify-content-center">
+          <button class="btn btn-primary w-100" onclick="Register()">Register</button>
+        </div>
+        <br />
+        <div class="d-flex justify-content-center">
+            <a href="http://localhost:3300">Van már fiókod?</a>
+        </div>
+      </div>
     </div>
 
   </div>

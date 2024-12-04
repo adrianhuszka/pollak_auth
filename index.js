@@ -10,7 +10,6 @@ import cors from "cors";
 import { verifyUserGroups } from "./middleware/auth.middleware.js";
 
 const app = express();
-app.use(cors(corsOptions));
 
 const corsOptions = {
   origin: [
@@ -21,6 +20,7 @@ const corsOptions = {
   optionsSuccessStatus: 200,
 };
 
+app.use(cors(corsOptions));
 app.set("view engine", "ejs");
 app.use(express.json());
 app.use(cookieParser());
