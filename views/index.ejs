@@ -10,9 +10,7 @@
     <title>Login</title>
   </head>
   <body class="text-light">
-    <div
-      class="container d-flex justify-content-center align-items-center min-vh-100"
-    >
+    <div class="container d-flex justify-content-center align-items-center min-vh-100">
       <div class="card p-4 shadow-lg" style="width: 350px">
         <h3 class="text-center mb-4">Login</h3>
         <div class="mb-3">
@@ -37,6 +35,14 @@
             >Elfelejtetted a jelszavad?</a
           >
         </div>
+      </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal" id="loginModal">
+      <div class="modal-dialog">
+        <h4 class="modal-title" id="modalTitle"></h4>
+        <p class="modal-body" id="modalBody"></p>
       </div>
     </div>
 
@@ -65,6 +71,30 @@
       .btn-primary:hover {
         background-color: #0056b3;
       }
+      .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.5);
+        justify-content: center;
+        align-items: center;
+        z-index: 9999;
+      }
+      .modal-dialog {
+        background-color: #333;
+        padding: 20px;
+        border-radius: 10px;
+        width: 300px;
+      }
+      .modal-title {
+        color: white;
+      }
+      .modal-body {
+        color: white;
+      }
     </style>
 
     <script>
@@ -85,6 +115,7 @@
         }
         return "";
       }
+
       function parseJwt(token) {
         var base64Url = token.split(".")[1];
         var base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
@@ -101,6 +132,17 @@
         return JSON.parse(jsonPayload);
       }
 
+      function openModal(title, body, redirectUrl) {
+        document.getElementById("modalTitle").textContent = title;
+        document.getElementById("modalBody").textContent = body;
+        document.getElementById("loginModal").style.display = "flex";
+
+        // 3 másodperc után átirányítunk
+        setTimeout(function () {
+          window.location.href = redirectUrl;
+        }, 3000); // 3000 ms = 3 másodperc
+      }
+
       function Login() {
         fetch(`/auth/login`, {
           headers: {
@@ -113,18 +155,13 @@
           }),
         }).then(async (res) => {
           const data = await res.json();
-          console.log(data);
-          const cookies = document.cookie;
           const cookie = getCookie("access_token");
           const jocookie = parseJwt(cookie);
 
-          console.log(jocookie);
-
           if (jocookie.userGroup === "ADMIN") {
-            alert("Belépve mint admin");
-            window.location.href = "https://auth.pollak.info/table";
+            openModal("Üdvözöljük ADMIN!", "belépés ADMIN-ként", "https://auth.pollak.info/table");
           } else {
-            alert("Belépve mint felhasználó");
+            openModal("Üdvözöljük USER!", "belépés USER-ként", "https://auth.pollak.info/");
           }
         });
       }
