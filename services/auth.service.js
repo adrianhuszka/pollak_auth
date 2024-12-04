@@ -1,10 +1,11 @@
 import jwt from "jsonwebtoken";
 import { PrismaClient } from "@prisma/client";
+import crypto from "crypto";
 
 const prisma = new PrismaClient();
 
 export async function verifyJwt(access_token, refresh_token) {
-  const data = await prisma.maindata.findFirst()
+  const data = await prisma.maindata.findFirst();
   return new Promise((resolve, reject) => {
     jwt.verify(
       access_token,
@@ -34,10 +35,12 @@ export async function verifyJwt(access_token, refresh_token) {
 }
 
 async function verifyRefreshToken(refresh_token) {
-  const data = await prisma.maindata.findFirst()
+  const data = await prisma.maindata.findFirst();
   let ret;
   try {
-    ret = jwt.verify(refresh_token, data.RefreshTokenSecret, { algorithm:  data.RefreshTokenAlgorithm });
+    ret = jwt.verify(refresh_token, data.RefreshTokenSecret, {
+      algorithm: data.RefreshTokenAlgorithm,
+    });
   } catch (err) {
     ret = null;
   }
@@ -46,7 +49,7 @@ async function verifyRefreshToken(refresh_token) {
 }
 
 async function verifyWithIgnoreExpiration(token) {
-  const data = await prisma.maindata.findFirst()
+  const data = await prisma.maindata.findFirst();
   let ret;
   try {
     ret = jwt.verify(token, data.JWTExpiration, {
@@ -61,7 +64,7 @@ async function verifyWithIgnoreExpiration(token) {
 }
 
 async function createNewToken(id, nev, email, groupsNeve) {
-  const data = await prisma.maindata.findFirst()
+  const data = await prisma.maindata.findFirst();
   return jwt.sign(
     {
       sub: id,
@@ -77,35 +80,59 @@ async function createNewToken(id, nev, email, groupsNeve) {
   );
 }
 
-
-export async function updateMainData(JWTAlgorithm, JWTExpiration, JWTSecret, RefreshTokenAlgorithm, RefreshTokenExpiration, RefreshTokenSecret) {
+export async function updateMainData(
+  JWTAlgorithm,
+  JWTExpiration,
+  JWTSecret,
+  RefreshTokenAlgorithm,
+  RefreshTokenExpiration,
+  RefreshTokenSecret
+) {
   try {
-  await prisma.maindata.update({
-    where: {
-      id: "5a97ea0a-a19f-11ef-95f3-0a0027000007"
-
-    },
-    data: {
-      JWTAlgorithm: JWTAlgorithm,
-      JWTExpiration: Number(JWTExpiration),
-      JWTSecret: JWTSecret,
-      RefreshTokenAlgorithm: RefreshTokenAlgorithm,
-      RefreshTokenExpiration: Number(RefreshTokenExpiration),
-      RefreshTokenSecret: RefreshTokenSecret
-    }
-    })
-    return "az adat sikeresen frissítve"
-  } catch(err) {
-    return err
+    await prisma.maindata.update({
+      where: {
+        id: "5a97ea0a-a19f-11ef-95f3-0a0027000007",
+      },
+      data: {
+        JWTAlgorithm: JWTAlgorithm,
+        JWTExpiration: Number(JWTExpiration),
+        JWTSecret: JWTSecret,
+        RefreshTokenAlgorithm: RefreshTokenAlgorithm,
+        RefreshTokenExpiration: Number(RefreshTokenExpiration),
+        RefreshTokenSecret: RefreshTokenSecret,
+      },
+    });
+    return "az adat sikeresen frissítve";
+  } catch (err) {
+    return err;
   }
 }
 
 export async function listAllTokens() {
   const data = await prisma.maindata.findUnique({
     where: {
-      id: "5a97ea0a-a19f-11ef-95f3-0a0027000007"
-    }
+      id: "5a97ea0a-a19f-11ef-95f3-0a0027000007",
+    },
   });
 
   return data;
+}
+
+export async function createForgotToken(userId) {
+  const token = crypto.randomBytes(50).toString("hex");
+  const expiresAt = new Date();
+  expiresAt.setMinutes(expiresAt.getMinutes() + 5);
+
+  try {
+    await prisma.user.update({
+      where: { id: userId },
+      data: {
+        ForgotToken: token,
+        ForgotTokenExpiresAt: expiresAt,
+      },
+    });
+    return token;
+  } catch (err) {
+    return err;
+  }
 }
