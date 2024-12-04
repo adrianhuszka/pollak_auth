@@ -38,6 +38,14 @@
       </div>
     </div>
 
+    <!-- Modal -->
+    <div class="modal" id="loginModal">
+      <div class="modal-dialog">
+        <h4 class="modal-title" id="modalTitle"></h4>
+        <p class="modal-body" id="modalBody"></p>
+      </div>
+    </div>
+
     <style>
       body {
         background-color: rgba(28, 28, 28);
@@ -147,14 +155,13 @@
           }),
         }).then(async (res) => {
           const data = await res.json();
-          console.log(data);
           const cookie = getCookie("access_token");
           const jocookie = parseJwt(cookie);
 
           if (jocookie.userGroup === "ADMIN") {
-            openModal("Üdvözöljük ADMIN!", "Admin jogkörrel belépve!", "https://auth.pollak.info/table");
+            openModal("Üdvözöljük ADMIN!", "belépés ADMIN-ként", "https://auth.pollak.info/table");
           } else {
-            openModal("Üdvözöljük Felhasználó!", "Felhasználó jogkörrel belépve!", "https://auth.pollak.info/");
+            openModal("Üdvözöljük USER!", "belépés USER-ként", "https://auth.pollak.info/");
           }
         });
       }
