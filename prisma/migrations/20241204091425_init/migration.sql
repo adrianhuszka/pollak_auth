@@ -5,7 +5,7 @@
 
 */
 -- AlterTable
-ALTER TABLE `user` ADD COLUMN `ForgotToken` VARCHAR(100) NULL,
+ALTER TABLE `User` ADD COLUMN `ForgotToken` VARCHAR(100) NULL,
     ADD COLUMN `ForgotTokenExpiresAt` DATETIME(3) NULL;
 
 -- CreateIndex
