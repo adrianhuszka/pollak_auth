@@ -16,6 +16,7 @@ const corsOptions = {
     "http://localhost:5173",
     "https://pollak.info",
     "https://[a-z0-9]+.pollak.info",
+    "http://10.0.0.251:3013",
   ],
   optionsSuccessStatus: 200,
 };
