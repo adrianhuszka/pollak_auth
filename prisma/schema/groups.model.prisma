@@ -1,4 +1,8 @@
 model Groups {
   neve String @id
   users User[]
+  read Boolean 
+  update Boolean
+  delete Boolean
+  write Boolean
 }

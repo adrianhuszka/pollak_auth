@@ -121,3 +121,12 @@ export async function Groups() {
 
   return groups;
 }
+
+export async function getAllUsersById(id) {
+      const data = await prisma.user.findMany({
+        where: {
+          id: id
+        },
+      });
+      return data;
+}

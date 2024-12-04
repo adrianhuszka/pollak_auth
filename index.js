@@ -6,8 +6,19 @@ import { GetAllUsers, Groups } from "./services/user.service.js";
 import { groupController } from "./controllers/group.controller.js";
 import { listAllGroup } from "./services/group.service.js";
 import { listAllTokens } from "./services/auth.service.js";
+import cors from "cors";
 
 const app = express();
+app.use(cors(corsOptions));
+
+const corsOptions = {
+  origin: [
+    "http://localhost:5173",
+    "https://pollak.info",
+    "https://[a-z0-9]+.pollak.info",
+  ],
+  optionsSuccessStatus: 200,
+};
 
 app.set("view engine", "ejs");
 app.use(express.json());
