@@ -56,10 +56,18 @@ router.post("/login", async (req, res) => {
   try {
     const user = await login(username, password);
 
-    res.cookie("access_token", user.access_token, { maxAge: 10 * 60 * 1000 });
+    res.cookie("access_token", user.access_token, {
+      maxAge: 10 * 60 * 1000,
+      domain: "pollak.info",
+      sameSite: "lax",
+      secure: true,
+    });
     res.cookie("refresh_token", user.refresh_token, {
       maxAge: 90 * 60 * 1000,
       httpOnly: true,
+      domain: "pollak.info",
+      sameSite: "lax",
+      secure: true,
     });
 
     res.status(200).json(user);
@@ -131,8 +139,8 @@ router.put("/pwdChange", async (req, res) => {
   }
 });
 
-router.post("/email", async (req, res) =>{
-  const {email } = req.body;
+router.post("/email", async (req, res) => {
+  const { email } = req.body;
   try {
     const data = await Kuldes(email);
     res.status(200).json(data);
@@ -140,6 +148,6 @@ router.post("/email", async (req, res) =>{
     console.error("Error sending email:", err);
     res.status(500).send("Error sending emailemail");
   }
-})
+});
 
 export { router as authController };
