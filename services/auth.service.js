@@ -99,7 +99,6 @@ export async function register(username, email, password, nev, om, groupsNeve) {
   });
 }
 export async function login(username, password) {
-  console.log("In service", username, password);
   const user = await prisma.user
     .findUnique({
       where: {
@@ -110,6 +109,8 @@ export async function login(username, password) {
       return error.message;
     });
 
+  console.log("user", user);
+
   if (!user) {
     return { message: "Hibás felhasználónév vagy jelszó" };
   }
@@ -119,6 +120,8 @@ export async function login(username, password) {
   }
 
   const data = await prisma.maindata.findFirst();
+
+  console.log("main data", data);
 
   if (!data) {
     return { message: "Hiba történt" };
