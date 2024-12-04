@@ -14,32 +14,27 @@
       class="container d-flex justify-content-center align-items-center min-vh-100"
     >
       <div class="card p-4 shadow-lg" style="width: 350px">
-        <h3 class="text-center mb-4">Login</h3>
+        <h3 class="text-center mb-4">Bejelentkezés</h3>
         <div class="mb-3">
-          <label for="username" class="form-label">Username</label>
-          <input
-            type="text"
-            id="username"
-            class="form-control"
-
-          />
+          <label for="username" class="form-label">Felhasználónév</label>
+          <input type="text" id="username" class="form-control" />
         </div>
         <div class="mb-3">
-          <label for="password" class="form-label">Password</label>
-          <input
-            type="password"
-            id="password"
-            class="form-control"
-
-          />
+          <label for="password" class="form-label">Jelszó</label>
+          <input type="password" id="password" class="form-control" />
+          <a class="elfjel" href="/forgotpassword">Elfelejtettem a jelszót</a>
         </div>
         <div class="d-flex justify-content-center">
-          <button class="btn btn-primary w-100" onclick="Login()">Login</button>
+          <button class="btn btn-primary w-100" onclick="Login()">Bejelentkezés</button>
         </div>
       </div>
     </div>
 
     <style>
+      .elfjel {
+        float: right;
+      }
+
       body {
         background-color: rgba(28, 28, 28);
       }
@@ -85,7 +80,7 @@
             console.log("Successfully logged in");
             location.replace("/table");
           } else {
-            alert("Login failed! Please check your credentials.");
+            alert("Nem tudsz bejelentkezni, nem megfelelő adatok.");
           }
         });
       }

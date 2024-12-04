@@ -49,6 +49,15 @@ app.get("/token", verifyUserGroups(["admin"]), async (req, res) => {
   });
 });
 
+
+app.get("/forgotpassword", (req, res) => {
+  res.render("forgotpassword");
+});
+
+app.get("/changepassword", (req, res) => {
+  res.render("changepassword");
+});
+
 app.listen(3300, () => {
   console.log("http://localhost:3300");
 });
