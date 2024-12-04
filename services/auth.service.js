@@ -16,7 +16,6 @@ export async function verifyJwt(access_token, refresh_token) {
         algorithm: data.JWTAlgorithm,
       },
       (err, decoded) => {
-        console.log(decoded);
         console.error(err);
 
         if (decoded) resolve("OK");
@@ -80,7 +79,7 @@ async function createNewToken(id, nev, email, groupsNeve) {
     data.JWTSecret,
     {
       expiresIn: data.JWTExpiration,
-      algorithm: "HS512",
+      algorithm: data.JWTAlgorithm,
     }
   );
 }
@@ -110,14 +109,18 @@ export async function login(username, password) {
       return error.message;
     });
 
-  console.log("user", user);
-
   if (!user) {
     return { message: "Hibás felhasználónév vagy jelszó" };
   }
 
   if (!(await bcrypt.compare(password, user.password))) {
     return { message: "Hibás felhasználónév vagy jelszó" };
+  }
+
+  const data = await prisma.maindata.findFirst();
+
+  if (!data) {
+    return { message: "Hiba történt" };
   }
 
   const token = jwt.sign(
@@ -127,10 +130,10 @@ export async function login(username, password) {
       email: user.email,
       userGroup: user.groupsNeve,
     },
-    "test",
+    data.JWTSecret,
     {
-      expiresIn: "1s",
-      algorithm: "HS512",
+      expiresIn: data.JWTExpiration,
+      algorithm: data.JWTAlgorithm,
     }
   );
 
@@ -138,37 +141,31 @@ export async function login(username, password) {
     {
       sub: user.id,
     },
-    "test",
+    data.RefreshTokenSecret,
     {
-      expiresIn: "1h",
-      algorithm: "HS512",
+      expiresIn: data.RefreshTokenExpiration,
+      algorithm: data.RefreshTokenAlgorithm,
     }
   );
 
-  console.log("token", token);
-  console.log("refreshToken", refreshToken);
-
   return {
-    user_id : user.id,
     access_token: token,
     refresh_token: refreshToken,
   };
 }
 
 export async function updateMainData(
-  
   JWTAlgorithm,
- 
-  JWTExpiration,
- 
-  JWTSecret,
- 
-  RefreshTokenAlgorithm,
- 
-  RefreshTokenExpiration,
- 
-  RefreshTokenSecret
 
+  JWTExpiration,
+
+  JWTSecret,
+
+  RefreshTokenAlgorithm,
+
+  RefreshTokenExpiration,
+
+  RefreshTokenSecret
 ) {
   try {
     await prisma.maindata.update({

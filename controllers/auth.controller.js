@@ -6,7 +6,7 @@ import {
   listAllTokens,
   pwdChange,
   login,
-  register
+  register,
 } from "../services/auth.service.js";
 
 const router = express.Router();
@@ -14,8 +14,6 @@ const router = express.Router();
 router.get("/verify", (req, res) => {
   const access_token = req.cookies.access_token;
   const refresh_token = req.cookies.refresh_token;
-
-  
 
   if (!access_token || !refresh_token)
     res.status(401).json({ message: "Token nem található" });
@@ -68,7 +66,6 @@ router.post("/login", async (req, res) => {
     res.status(400).json({ message: error.message });
   }
 });
-
 
 router.put("/update", async (req, res) => {
   const {

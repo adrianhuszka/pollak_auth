@@ -113,10 +113,19 @@
           }),
         }).then(async (res) => {
           const data = await res.json();
-          console.log(data)
+          console.log(data);
           const cookies = document.cookie;
           const cookie = getCookie("access_token");
           const jocookie = parseJwt(cookie);
+
+          console.log(jocookie);
+
+          if (jocookie.userGroup === "ADMIN") {
+            alert("Belépve mint admin");
+            window.location.href = "http://localhost:3300/table";
+          } else {
+            alert("Belépve mint felhasználó");
+          }
         });
       }
     </script>
