@@ -36,3 +36,5 @@
 - User admin jogosultságának ellenőrzése
   - 401-es hiba, ha nem admin
 - Hiba oldal a megfelelő hibakódokkal
+
+## Varga "Behánytam" Ádám
