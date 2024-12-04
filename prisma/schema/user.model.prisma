@@ -4,6 +4,8 @@ model User {
   password String
   nev      String
   email    String @unique
+  ForgotToken String? @unique @db.VarChar(100)
+  ForgotTokenExpiresAt DateTime?
 
   om      String @unique
   om_azon OM     @relation(fields: [om], references: [kod])
