@@ -123,6 +123,9 @@ export async function login(username, password) {
     return { message: "Hiba történt" };
   }
 
+  console.log(user);
+  console.log(data);
+
   const token = jwt.sign(
     {
       sub: user.id,
