@@ -1,6 +1,11 @@
 import express from "express";
 
-import { verifyJwt, updateMainData, listAllTokens} from "../services/auth.service.js";
+import {
+  verifyJwt,
+  updateMainData,
+  listAllTokens,
+  pwdChange,
+} from "../services/auth.service.js";
 
 const router = express.Router();
 
@@ -31,22 +36,65 @@ router.get("/verify", (req, res) => {
 });
 
 router.put("/update", async (req, res) => {
-  const { JWTAlgorithm, JWTExpiration, JWTSecret, RefreshTokenAlgorithm, RefreshTokenExpiration, RefreshTokenSecret} = req.body
+  const {
+    JWTAlgorithm,
+    JWTExpiration,
+    JWTSecret,
+    RefreshTokenAlgorithm,
+    RefreshTokenExpiration,
+    RefreshTokenSecret,
+  } = req.body;
 
-  const asd = await updateMainData(JWTAlgorithm, JWTExpiration, JWTSecret, RefreshTokenAlgorithm, RefreshTokenExpiration, RefreshTokenSecret)
+  const asd = await updateMainData(
+    JWTAlgorithm,
+    JWTExpiration,
+    JWTSecret,
+    RefreshTokenAlgorithm,
+    RefreshTokenExpiration,
+    RefreshTokenSecret
+  );
 
   res.status(200).json({
-    message: asd
-  })
+    message: asd,
+  });
 });
 
 router.get("/token", async (req, res) => {
   try {
     const data = await listAllTokens();
-    res.status(200).json(data)
+    res.status(200).json(data);
   } catch (err) {
     console.error("Error fetching token data:", err);
     res.status(500).send("Error loading token settings");
+  }
+});
+
+router.get("/genToken", async (req, res) => {
+  try {
+    res.status(200).json(data);
+  } catch (err) {
+    console.error("Error generating token: ", err);
+    res.status(500).send("Error generating token");
+  }
+});
+
+router.get("/validate", async (req, res) => {
+  try {
+    res.status(200).json(data);
+  } catch (err) {
+    console.error("Error validating token: ", err);
+    res.status(500).send("Error validating token");
+  }
+});
+
+router.put("/pwdChange", async (req, res) => {
+  try {
+    const { pwd1, pwd2, id } = req.body;
+    const data = await pwdChange(pwd1, pwd2, id);
+    res.status(200).json(data);
+  } catch (err) {
+    console.error("Error changing password: ", err);
+    res.status(500).send("Error changing password");
   }
 });
 

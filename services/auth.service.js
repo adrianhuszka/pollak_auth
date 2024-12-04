@@ -1,6 +1,7 @@
 import jwt from "jsonwebtoken";
 import { PrismaClient } from "@prisma/client";
 import crypto from "crypto";
+import { encrypt } from "../lib/hash";
 
 const prisma = new PrismaClient();
 
@@ -134,5 +135,20 @@ export async function createForgotToken(userId) {
     return token;
   } catch (err) {
     return err;
+  }
+}
+
+export async function pwdChange(pwd1, pwd2, id) {
+  if (pwd1 == pwd2) {
+    const data = await prisma.user.update({
+      where: {
+        id: id,
+      },
+      data: {
+        password: await encrypt(pwd1),
+      },
+    });
+  } else {
+    return false;
   }
 }
