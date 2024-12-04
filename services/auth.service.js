@@ -122,7 +122,7 @@ export async function listAllTokens() {
 export async function createForgotToken(userId) {
   const token = crypto.randomBytes(50).toString("hex");
   const expiresAt = new Date();
-  expiresAt.setMinutes(expiresAt.getMinutes() + 5);
+  expiresAt.setHours(expiresAt.getHours() + 1);
 
   try {
     await prisma.user.update({
