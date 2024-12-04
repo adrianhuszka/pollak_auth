@@ -49,6 +49,10 @@ app.get("/token", verifyUserGroups(["admin"]), async (req, res) => {
   });
 });
 
+app.get("/register", async (req, res) => {
+  res.render("register");
+});
+
 app.listen(3300, () => {
   console.log("http://localhost:3300");
 });
