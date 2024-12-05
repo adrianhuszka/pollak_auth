@@ -15,7 +15,7 @@ const corsOptions = {
   origin: [
     "http://localhost:5173",
     "https://pollak.info",
-    "https://[a-z0-9]+.pollak.info",
+    /https:\/\/[a-z0-9]+\.pollak\.info/,
     "http://10.0.0.251:3013",
   ],
   optionsSuccessStatus: 200,
@@ -65,7 +65,6 @@ app.get("/token", verifyUserGroups(["ADMIN"]), async (req, res) => {
     tokenData: await listAllTokens(),
   });
 });
-
 
 app.get("/forgotpassword", (req, res) => {
   res.render("forgotpassword");
