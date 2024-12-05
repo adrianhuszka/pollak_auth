@@ -59,14 +59,15 @@ router.post("/login", async (req, res) => {
     res.cookie("access_token", user.access_token, {
       maxAge: 10 * 60 * 1000,
       domain: "pollak.info",
-      sameSite: "lax",
+      sameSite: "None",
       secure: true,
+      httpOnly: false,
     });
     res.cookie("refresh_token", user.refresh_token, {
       maxAge: 90 * 60 * 1000,
-      httpOnly: true,
+      httpOnly: false,
       domain: "pollak.info",
-      sameSite: "lax",
+      sameSite: "None",
       secure: true,
     });
 
