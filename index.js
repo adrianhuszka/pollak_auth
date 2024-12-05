@@ -18,15 +18,11 @@ const corsOptions = {
     /https:\/\/[a-z0-9]+\.pollak\.info/,
     "http://10.0.0.251:3013",
   ],
+  credentials: true,
   optionsSuccessStatus: 200,
 };
 
 app.use(cors(corsOptions));
-
-app.use(cors(corsOptions));
-
-app.use(cors(corsOptions));
-app.set("view engine", "ejs");
 app.use(express.json());
 app.use(cookieParser());
 app.set("view engine", "ejs");
