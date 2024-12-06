@@ -1,12 +1,13 @@
 import express from "express";
 import cookieParser from "cookie-parser";
+import session from "express-session";
+import cors from "cors";
 import { userController } from "./controllers/user.controller.js";
 import { authController } from "./controllers/auth.controller.js";
 import { GetAllUsers, Groups } from "./services/user.service.js";
 import { groupController } from "./controllers/group.controller.js";
 import { listAllGroup } from "./services/group.service.js";
 import { listAllTokens } from "./services/auth.service.js";
-import cors from "cors";
 import { verifyUserGroups } from "./middleware/auth.middleware.js";
 
 const app = express();
@@ -25,6 +26,20 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.use(express.json());
 app.use(cookieParser());
+app.use(
+  session({
+    secret: "L3m0nC0d3",
+    resave: false,
+    saveUninitialized: true,
+    cookie: {
+      secure: true,
+      sameSite: "none",
+      httpOnly: true,
+    },
+    proxy: true,
+  })
+);
+
 app.set("view engine", "ejs");
 
 app.use("/user", verifyUserGroups(["ADMIN", "USER"]), userController);

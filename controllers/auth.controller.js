@@ -25,7 +25,7 @@ router.get("/verify", (req, res) => {
           res.status(200).json({ message: "OK" });
         } else {
           res.cookie("access_token", data, {
-            maxAge: 10 * 60 * 1000,
+            maxAge: 24 * 60 * 60 * 1000,
           });
           res.status(200).json({ message: "Refreshed" });
         }
@@ -57,14 +57,14 @@ router.post("/login", async (req, res) => {
     const user = await login(username, password);
 
     res.cookie("access_token", user.access_token, {
-      maxAge: 10 * 60 * 1000,
+      maxAge: 24 * 60 * 60 * 1000,
       sameSite: "none",
       secure: true,
       httpOnly: false,
       domain: "pollak.info",
     });
     res.cookie("refresh_token", user.refresh_token, {
-      maxAge: 90 * 60 * 1000,
+      maxAge: 24 * 60 * 60 * 1000,
       httpOnly: false,
       sameSite: "none",
       secure: true,
