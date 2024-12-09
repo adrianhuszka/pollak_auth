@@ -1,6 +1,5 @@
 import express from "express";
 import cookieParser from "cookie-parser";
-import session from "express-session";
 import cors from "cors";
 import { userController } from "./controllers/user.controller.js";
 import { authController } from "./controllers/auth.controller.js";
@@ -26,19 +25,6 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.use(express.json());
 app.use(cookieParser());
-app.use(
-  session({
-    secret: "L3m0nC0d3",
-    resave: false,
-    saveUninitialized: true,
-    cookie: {
-      secure: true,
-      sameSite: "none",
-      httpOnly: true,
-    },
-    proxy: true,
-  })
-);
 
 app.set("view engine", "ejs");
 
