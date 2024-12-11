@@ -6,10 +6,8 @@ import jwt from "jsonwebtoken";
 
 const prisma = new PrismaClient();
 
-export async function verifyJwt(session, access_token, refresh_token) {
+export async function verifyJwt(access_token, refresh_token) {
   const data = await prisma.maindata.findFirst();
-
-  console.log("session obj: ", session);
 
   return new Promise((resolve, reject) => {
     jwt.verify(
@@ -21,9 +19,9 @@ export async function verifyJwt(session, access_token, refresh_token) {
       (err, decoded) => {
         console.error(err);
         console.log("decoded JWT: ", decoded);
-        console.log("user_id: ", session.user_id);
+        // console.log("user_id: ", session.user_id);
 
-        if (decoded && decoded.sub === session.user_id) resolve("OK");
+        if (decoded) resolve("OK");
 
         if (err && err.message === data.JWTExpiration) {
           const ref = verifyRefreshToken(refresh_token);

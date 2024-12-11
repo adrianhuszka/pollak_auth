@@ -10,12 +10,12 @@ export function verifyUserGroups(groups = []) {
     const access_token = req.cookies.access_token;
     const refresh_token = req.cookies.refresh_token;
 
-    if (!req.session) return res.status(401).json({ message: "Access Denied" });
+    // if (!req.session.user_id) return res.status(401).json({ message: "Access Denied" });
 
     if (!access_token)
       return res.status(401).json({ message: "Access Denied" });
 
-    const verified = await verifyJwt(req.session ,access_token, refresh_token);
+    const verified = await verifyJwt(access_token, refresh_token);
 
     if (verified !== "OK")
       return res.status(401).json({ message: "Token Expired" });
