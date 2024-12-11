@@ -43,7 +43,7 @@ router.post("/register", async (req, res) => {
     const user = await register(username, email, password, nev, om, groupsNeve);
     res.status(201).json(user);
   } catch (error) {
-    console.error(error)
+    console.error(error);
     res.status(400).json({ message: error.message });
   }
 });
@@ -71,7 +71,7 @@ router.post("/login", async (req, res) => {
       domain: "pollak.info",
     });
 
-    req.session.user_id = user_id
+    req.session.user_id = user_id;
 
     res.status(200).json(user);
   } catch (error) {
@@ -156,7 +156,7 @@ router.post("/email", async (req, res) => {
 router.post("/logout", (req, res) => {
   res.clearCookie("access_token");
   res.clearCookie("refresh_token");
-  res.clearCookie("sid")
+  res.clearCookie("sid");
   res.status(200).json({ message: "Logged out successfully" });
 });
 
