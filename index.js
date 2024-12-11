@@ -52,7 +52,14 @@ app.use("/group", verifyUserGroups(["ADMIN"]), groupController);
 app.use("/static", express.static("public"));
 
 app.get("/", async (req, res) => {
-  res.render("index", {});
+  if(req.session.views){
+    req.session.views++
+  } else {
+    req.session.views = 1;
+  }
+  res.render("index", {
+    data: req.session.views
+  });
 });
 
 app.get("/table", verifyUserGroups(["ADMIN", "USER"]), async (req, res) => {
@@ -71,9 +78,7 @@ app.get("/groups", verifyUserGroups(["ADMIN", "USER"]), async (req, res) => {
   });
 });
 
-app.get("/", (req, res) => {
-  res.render("index");
-});
+
 
 app.get("/token", verifyUserGroups(["ADMIN"]), async (req, res) => {
   res.render("token", {
