@@ -99,6 +99,8 @@
                 >Felhasználók</a
               >
             </li>
+
+            <button class="nav-link btn btn-danger ms-auto" onclick="logout()">Log out</button>
           </ul>
         </div>
       </div>
@@ -346,3 +348,23 @@
     </div>
   </body>
 </html>
+
+<script>
+  function logout() {
+
+    fetch('/auth/logout', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+    .then(response => {
+      if (response.ok) {
+        window.location.href = '/';
+      } else {
+        console.error('Logout failed');
+      }
+    })
+    .catch((error) => console.error('Error during logout:', error));
+    }
+</script>
