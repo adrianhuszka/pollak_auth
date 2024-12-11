@@ -44,6 +44,7 @@ router.post("/register", async (req, res) => {
     const user = await register(username, email, password, nev, om, groupsNeve);
     res.status(201).json(user);
   } catch (error) {
+    console.error(error)
     res.status(400).json({ message: error.message });
   }
 });
@@ -70,6 +71,8 @@ router.post("/login", async (req, res) => {
       secure: true,
       domain: "pollak.info",
     });
+
+    req.session.user_id = user_id
 
     res.status(200).json(user);
   } catch (error) {

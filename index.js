@@ -1,6 +1,7 @@
 import express from "express";
 import cookieParser from "cookie-parser";
 import cors from "cors";
+import session from "express-session";
 import { userController } from "./controllers/user.controller.js";
 import { authController } from "./controllers/auth.controller.js";
 import { GetAllUsers, Groups } from "./services/user.service.js";
@@ -25,6 +26,20 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.use(express.json());
 app.use(cookieParser());
+app.use(session({
+  name: "sid",
+  secret: "test",
+  resave: false,
+  saveUninitialized:true,
+  proxy: true,
+  cookie: {
+    httpOnly: true,
+    secure: true,
+    maxAge:24 * 60 * 60 * 1000,
+    domain:"pollak.info",
+    sameSite: "none"
+  }
+}))
 
 app.set("view engine", "ejs");
 
@@ -34,7 +49,14 @@ app.use("/group", verifyUserGroups(["ADMIN"]), groupController);
 app.use("/static", express.static("public"));
 
 app.get("/", async (req, res) => {
-  res.render("index", {});
+  if (req.session.views) {
+  req.session.views++
+  }else{
+    req.session.views = 1;
+  }
+  res.render("index", {
+    data: req.session.views
+  });
 });
 
 app.get("/table", verifyUserGroups(["ADMIN", "USER"]), async (req, res) => {
@@ -53,9 +75,6 @@ app.get("/groups", verifyUserGroups(["ADMIN", "USER"]), async (req, res) => {
   });
 });
 
-app.get("/", (req, res) => {
-  res.render("index");
-});
 
 app.get("/token", verifyUserGroups(["ADMIN"]), async (req, res) => {
   res.render("token", {
