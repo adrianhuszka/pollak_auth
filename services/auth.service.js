@@ -21,6 +21,7 @@ export async function verifyJwt(session, access_token, refresh_token) {
       (err, decoded) => {
         console.error(err);
         console.log("decoded JWT: ", decoded);
+        console.log("user_id: ", session.user_id);
 
         if (decoded && decoded.sub === session.user_id) resolve("OK");
 
