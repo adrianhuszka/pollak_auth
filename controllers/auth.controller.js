@@ -154,6 +154,7 @@ router.post("/email", async (req, res) => {
 });
 
 router.post("/logout", (req, res) => {
+  console.log("req.cookies", req.cookies);
   res.clearCookie("access_token");
   res.clearCookie("refresh_token");
   res.clearCookie("sid");
