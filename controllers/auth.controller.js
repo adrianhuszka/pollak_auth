@@ -1,5 +1,4 @@
 import express from "express";
-
 import {
   verifyJwt,
   updateMainData,
@@ -150,8 +149,15 @@ router.post("/email", async (req, res) => {
     res.status(200).json(data);
   } catch (err) {
     console.error("Error sending email:", err);
-    res.status(500).send("Error sending emailemail");
+    res.status(500).send("Error sending email");
   }
+});
+
+router.post("/logout", (req, res) => {
+  res.clearCookie("access_token");
+  res.clearCookie("refresh_token");
+  res.clearCookie("sid")
+  res.status(200).json({ message: "Logged out successfully" });
 });
 
 export { router as authController };

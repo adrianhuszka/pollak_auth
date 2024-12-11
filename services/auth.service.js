@@ -158,7 +158,7 @@ export async function login(username, password) {
   return {
     access_token: token,
     refresh_token: refreshToken,
-    user_id: user.id
+    user_id: user.id,
   };
 }
 

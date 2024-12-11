@@ -2,6 +2,7 @@ import express from "express";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import session from "express-session";
+import session from "express-session";
 import { userController } from "./controllers/user.controller.js";
 import { authController } from "./controllers/auth.controller.js";
 import { GetAllUsers, Groups } from "./services/user.service.js";
