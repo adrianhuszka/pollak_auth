@@ -62,6 +62,7 @@ router.post("/login", async (req, res) => {
       secure: true,
       httpOnly: false,
       domain: "pollak.info",
+      path: "/",
     });
     res.cookie("refresh_token", user.refresh_token, {
       maxAge: 24 * 60 * 60 * 1000,
@@ -69,6 +70,7 @@ router.post("/login", async (req, res) => {
       sameSite: "none",
       secure: true,
       domain: "pollak.info",
+      path: "/",
     });
 
     req.session.user_id = user.user_id;
@@ -155,9 +157,18 @@ router.post("/email", async (req, res) => {
 
 router.post("/logout", (req, res) => {
   console.log("req.cookies", req.cookies);
-  res.clearCookie("access_token");
-  res.clearCookie("refresh_token");
-  res.clearCookie("sid");
+  res.clearCookie("access_token", {
+    domain: "pollak.info",
+    path: "/",
+  });
+  res.clearCookie("refresh_token", {
+    domain: "pollak.info",
+    path: "/",
+  });
+  res.clearCookie("sid", {
+    domain: "pollak.info",
+    path: "/",
+  });
   res.status(200).json({ message: "Logged out successfully" });
 });
 
