@@ -49,13 +49,8 @@ app.use("/group", verifyUserGroups(["ADMIN"]), groupController);
 app.use("/static", express.static("public"));
 
 app.get("/", async (req, res) => {
-  if (req.session.views) {
-  req.session.views++
-  }else{
-    req.session.views = 1;
-  }
   res.render("index", {
-    data: req.session.views
+    
   });
 });
 

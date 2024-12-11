@@ -70,7 +70,7 @@
         
         function Register(){
             if(password.value === password2.value){
-                        fetch(`http://localhost:3300/auth/register`, {
+            fetch(`/auth/register`, {
                 headers: {
                     'Content-Type': 'application/json'
                 },
@@ -79,11 +79,12 @@
                     email: email.value, 
                     nev: name.value,
                     om: om.value,
-                    groupsNeve: "User",
+                    groupsNeve: "USER",
                     username: username.value,
                     password: password.value
                 })
             }).then((res) => {
+              location.replace("/")
                 console.log("beléptem")
             }).catch((err) => {console.error(err)})
         }else{

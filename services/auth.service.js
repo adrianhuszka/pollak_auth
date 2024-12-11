@@ -6,7 +6,7 @@ import jwt from "jsonwebtoken";
 
 const prisma = new PrismaClient();
 
-export async function verifyJwt(access_token, refresh_token) {
+export async function verifyJwt(session, access_token, refresh_token) {
   const data = await prisma.maindata.findFirst();
   return new Promise((resolve, reject) => {
     jwt.verify(
@@ -18,7 +18,7 @@ export async function verifyJwt(access_token, refresh_token) {
       (err, decoded) => {
         console.error(err);
 
-        if (decoded) resolve("OK");
+        if (decoded && decded.sub === session.userId) resolve("OK");
 
         if (err && err.message === data.JWTExpiration) {
           const ref = verifyRefreshToken(refresh_token);
