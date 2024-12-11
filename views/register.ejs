@@ -84,6 +84,7 @@
                     password: password.value
                 })
             }).then((res) => {
+              location.replace("/")
                 console.log("beléptem")
             }).catch((err) => {console.error(err)})
         }else{
