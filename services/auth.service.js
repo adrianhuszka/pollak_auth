@@ -18,7 +18,7 @@ export async function verifyJwt(session, access_token, refresh_token) {
       (err, decoded) => {
         console.error(err);
 
-        if (decoded && decded.sub === session.userId) resolve("OK");
+        if (decoded && decoded.sub === session.userId) resolve("OK");
 
         if (err && err.message === data.JWTExpiration) {
           const ref = verifyRefreshToken(refresh_token);
