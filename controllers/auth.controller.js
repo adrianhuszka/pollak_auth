@@ -71,7 +71,7 @@ router.post("/login", async (req, res) => {
       domain: "pollak.info",
     });
 
-    req.session.user_id = user_id;
+    req.session.user_id = user.user_id;
 
     res.status(200).json(user);
   } catch (error) {
