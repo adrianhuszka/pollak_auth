@@ -88,16 +88,22 @@
               <a class="nav-link" href="http://localhost:3300/token">Token</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="http://localhost:3300/groups">Csoportok</a>
+              <a class="nav-link" href="http://localhost:3300/groups"
+                >Csoportok</a
+              >
             </li>
           </ul>
-          
-          <button class="nav-link btn btn-danger ms-auto" onclick="logout()">Log out</button>
+
+          <button class="nav-link btn btn-danger ms-auto" onclick="logout()">
+            Log out
+          </button>
         </div>
       </div>
     </nav>
 
-    <div class="container-fluid h-100 d-flex justify-content-center align-items-center flex-column mt-5">
+    <div
+      class="container-fluid h-100 d-flex justify-content-center align-items-center flex-column mt-5"
+    >
       <h3>Felhasználók</h3>
       <table class="table table-striped mt-3 w-75">
         <thead>
@@ -113,14 +119,37 @@
         <tbody>
           <% users.forEach(element => { %>
           <tr>
-            <td><input id="<%= element.id %>" value="<%= element.id %>" disabled /></td>
-            <td><input id="<%= element.id %>nev" value="<%= element.username %>" /></td>
-            <td><input id="<%= element.id %>email" value="<%= element.email %>" /></td>
             <td>
-              <button class="btn btn-danger" onclick="Delete('<%= element.id %>')">Törlés</button>
+              <input
+                id="<%= element.id %>"
+                value="<%= element.id %>"
+                disabled
+              />
             </td>
             <td>
-              <button class="btn btn-info" onclick="UpdateUser('<%= element.id %>')">Módosítás</button>
+              <input
+                id="<%= element.id %>nev"
+                value="<%= element.username %>"
+              />
+            </td>
+            <td>
+              <input id="<%= element.id %>email" value="<%= element.email %>" />
+            </td>
+            <td>
+              <button
+                class="btn btn-danger"
+                onclick="Delete('<%= element.id %>')"
+              >
+                Törlés
+              </button>
+            </td>
+            <td>
+              <button
+                class="btn btn-info"
+                onclick="UpdateUser('<%= element.id %>')"
+              >
+                Módosítás
+              </button>
             </td>
             <td>
               <select class="form-select" id="floatingSelect">
@@ -176,22 +205,21 @@
     }
 
     function logout() {
-
-    fetch('/auth/logout', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    })
-    .then(response => {
-      if (response.ok) {
-        window.location.href = '/';
-      } else {
-        console.error('Logout failed');
-      }
-    })
-    .catch((error) => console.error('Error during logout:', error));
+      fetch("/auth/logout", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+      })
+        .then((response) => {
+          if (response.ok) {
+            window.location.href = "/";
+          } else {
+            console.error("Logout failed");
+          }
+        })
+        .catch((error) => console.error("Error during logout:", error));
     }
-
   </script>
 </html>
