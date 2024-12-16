@@ -54,10 +54,10 @@ router.post("/login", async (req, res) => {
   try {
     const user = await login(username, password);
 
-if (!user.access_token || !user.refresh_token){
-    res.status(401).json({ message: "Hibás felhasználó név vagy jelszó!" });
-return;
-}
+    if (!user.access_token || !user.refresh_token) {
+      res.status(401).json({ message: "Hibás felhasználó név vagy jelszó!" });
+      return;
+    }
     res.cookie("access_token", user.access_token, {
       maxAge: 24 * 60 * 60 * 1000,
       sameSite: "none",
