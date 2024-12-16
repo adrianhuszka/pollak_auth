@@ -51,8 +51,6 @@ router.post("/register", async (req, res) => {
 router.post("/login", async (req, res) => {
   const { username, password } = req.body;
 
-  console.log(username, password);
-
   try {
     const user = await login(username, password);
 
@@ -156,7 +154,6 @@ router.post("/email", async (req, res) => {
 });
 
 router.post("/logout", (req, res) => {
-  console.log("req.cookies", req.cookies);
   res.clearCookie("access_token", {
     domain: "pollak.info",
     path: "/",

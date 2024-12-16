@@ -18,8 +18,6 @@ export async function verifyJwt(access_token, refresh_token) {
       },
       (err, decoded) => {
         console.error(err);
-        console.log("decoded JWT: ", decoded);
-        // console.log("user_id: ", session.user_id);
 
         if (decoded) resolve("OK");
 
@@ -112,8 +110,6 @@ export async function login(username, password) {
       return error.message;
     });
 
-  console.log("user", user);
-
   if (!user) {
     return { message: "Hibás felhasználónév vagy jelszó" };
   }
@@ -124,14 +120,9 @@ export async function login(username, password) {
 
   const data = await prisma.maindata.findFirst();
 
-  console.log("main data", data);
-
   if (!data) {
     return { message: "Hiba történt" };
   }
-
-  console.log(user);
-  console.log(data);
 
   const token = jwt.sign(
     {

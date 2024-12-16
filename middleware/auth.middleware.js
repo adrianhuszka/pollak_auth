@@ -36,7 +36,6 @@ export function verifyUserGroups(groups = []) {
     if (groups.includes(user.Groups.neve)) {
       switch (req.method) {
         case "GET":
-          console.log("in get");
           if (user.Groups.read) return next();
           break;
         case "POST":
