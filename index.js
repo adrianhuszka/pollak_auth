@@ -92,3 +92,5 @@ app.get("/register", async (req, res) => {
 app.listen(3300, () => {
   console.log("http://localhost:3300");
 });
+
+export default app
