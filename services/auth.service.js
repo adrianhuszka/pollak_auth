@@ -67,6 +67,9 @@ async function verifyWithIgnoreExpiration(token) {
 
 async function createNewToken(id, nev, email, groupsNeve) {
   const data = await prisma.maindata.findFirst();
+
+  console.log("Creating token with: ", id, nev, email, groupsNeve)
+
   return jwt.sign(
     {
       sub: id,
