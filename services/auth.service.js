@@ -25,6 +25,8 @@ export async function verifyJwt(access_token, refresh_token) {
           const ref = verifyRefreshToken(refresh_token);
           const tokenWithIgnore = verifyWithIgnoreExpiration(access_token);
 
+          console.log(tokenWithIgnore)
+
           if (ref.sub === tokenWithIgnore.sub) {
             resolve(createNewToken(tokenWithIgnore.sub, tokenWithIgnore.nev, tokenWithIgnore.email, tokenWithIgnore.userGroup));
           } else {
