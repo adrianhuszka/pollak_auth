@@ -21,6 +21,8 @@ export async function verifyJwt(access_token, refresh_token) {
 
         if (decoded) resolve("OK");
 
+        console.error(err.message);
+
         if (err && err.message === data.JWTExpiration) {
           const ref = verifyRefreshToken(refresh_token);
           const tokenWithIgnore = verifyWithIgnoreExpiration(access_token);
@@ -28,9 +30,9 @@ export async function verifyJwt(access_token, refresh_token) {
           if (ref.sub === tokenWithIgnore.sub) {
             resolve(createNewToken(ref.sub, ref.nev, ref.email, ref.userGroup));
           } else {
-            reject("Error");
+            reject("Error Refreshing the token");
           }
-        } else if (err) reject("Error");
+        } else if (err) reject("Error Refreshing the token", err);
       }
     );
   });
