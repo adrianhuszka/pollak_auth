@@ -7,8 +7,8 @@ const prisma = new PrismaClient();
 
 export function verifyUserGroups(groups = []) {
   return async (req, res, next) => {
-    const access_token = req.cookies.access_token;
-    const refresh_token = req.cookies.refresh_token;
+    const access_token = req.cookies.access_token ? req.cookies.access_token : req.headers.Authorization;
+    const refresh_token = req.cookies.refresh_token ? req.cookies.refresh_token : req.headers.RefreshToken;
 
     // if (!req.session.user_id) return res.status(401).json({ message: "Access Denied" });
 
