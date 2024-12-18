@@ -16,14 +16,14 @@ export async function verifyJwt(access_token, refresh_token) {
       {
         algorithm: data.JWTAlgorithm,
       },
-      (err, decoded) => {
+      async (err, decoded) => {
         console.error(err);
 
         if (decoded) resolve("OK");
 
         if (err && err.message === "jwt expired") {
           const ref = verifyRefreshToken(refresh_token);
-          const tokenWithIgnore = verifyWithIgnoreExpiration(access_token);
+          const tokenWithIgnore = await verifyWithIgnoreExpiration(access_token);
 
           console.log(tokenWithIgnore)
 
