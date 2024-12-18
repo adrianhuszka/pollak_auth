@@ -23,7 +23,7 @@ export async function verifyJwt(access_token, refresh_token) {
 
         console.error("Error name: ", err.message);
 
-        if (err && err.message === TokenExpiredError) {
+        if (err && err.message === "jwt expired") {
           const ref = verifyRefreshToken(refresh_token);
           const tokenWithIgnore = verifyWithIgnoreExpiration(access_token);
 
