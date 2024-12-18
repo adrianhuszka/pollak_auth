@@ -12,8 +12,9 @@ import { Kuldes } from "../services/emailsender.js";
 const router = express.Router();
 
 router.get("/verify", (req, res) => {
+  console.log(req.headers)
   const access_token = req.cookies.access_token ? req.cookies.access_token : req.headers.Authorization.split(" ")[2];
-  const refresh_token = req.cookies.refresh_token ? req.cookies.refresh_token : req.headers.RefreshToken.split(" ")[1];
+  const refresh_token = req.cookies.refresh_token ? req.cookies.refresh_token : req.headers.Refresh-Token.split(" ")[1];
 
   console.log(req.headers)
 
