@@ -25,6 +25,11 @@ router.get("/verify", (req, res) => {
         } else {
           res.cookie("access_token", data, {
             maxAge: 24 * 60 * 60 * 1000,
+            sameSite: "none",
+            secure: true,
+            httpOnly: false,
+            domain: "pollak.info",
+            path: "/",
           });
           res.status(200).json({ message: "Refreshed" });
         }
