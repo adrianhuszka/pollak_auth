@@ -21,7 +21,7 @@ export async function verifyJwt(access_token, refresh_token) {
 
         if (decoded) resolve("OK");
 
-        console.error(err.message);
+        console.error("Error name: ", err.message);
 
         if (err && err.message === TokenExpiredError) {
           const ref = verifyRefreshToken(refresh_token);
