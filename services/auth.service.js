@@ -16,21 +16,23 @@ export async function verifyJwt(access_token, refresh_token) {
       {
         algorithm: data.JWTAlgorithm,
       },
-      (err, decoded) => {
+      async (err, decoded) => {
         console.error(err);
 
         if (decoded) resolve("OK");
 
-        if (err && err.message === data.JWTExpiration) {
+        if (err && err.message === "jwt expired") {
           const ref = verifyRefreshToken(refresh_token);
-          const tokenWithIgnore = verifyWithIgnoreExpiration(access_token);
+          const tokenWithIgnore = await verifyWithIgnoreExpiration(access_token);
+
+          console.log(tokenWithIgnore)
 
           if (ref.sub === tokenWithIgnore.sub) {
-            resolve(createNewToken(ref.sub, ref.nev, ref.email, ref.userGroup));
+            resolve(createNewToken(tokenWithIgnore.sub, tokenWithIgnore.nev, tokenWithIgnore.email, tokenWithIgnore.userGroup));
           } else {
-            reject("Error");
+            reject("Error Refreshing the token");
           }
-        } else if (err) reject("Error");
+        } else if (err) reject("Error Refreshing the token", err);
       }
     );
   });
@@ -40,9 +42,6 @@ async function verifyRefreshToken(refresh_token) {
   const data = await prisma.maindata.findFirst();
   let ret;
   try {
-    ret = jwt.verify(refresh_token, data.RefreshTokenSecret, {
-      algorithm: data.RefreshTokenAlgorithm,
-    });
     ret = jwt.verify(refresh_token, data.RefreshTokenSecret, {
       algorithm: data.RefreshTokenAlgorithm,
     });
@@ -70,6 +69,9 @@ async function verifyWithIgnoreExpiration(token) {
 
 async function createNewToken(id, nev, email, groupsNeve) {
   const data = await prisma.maindata.findFirst();
+
+  console.log("Creating token with: ", id, nev, email, groupsNeve)
+
   return jwt.sign(
     {
       sub: id,

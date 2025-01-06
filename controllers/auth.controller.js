@@ -12,11 +12,11 @@ import { Kuldes } from "../services/emailsender.js";
 const router = express.Router();
 
 router.get("/verify", (req, res) => {
-  const access_token = req.cookies.access_token;
-  const refresh_token = req.cookies.refresh_token;
+  const access_token = req.cookies.access_token ? req.cookies.access_token : req.headers.authorization.split(" ")[1];
+  const refresh_token = req.cookies.refresh_token ? req.cookies.refresh_token : req.headers.refreshtoken;
 
   if (!access_token || !refresh_token)
-    res.status(401).json({ message: "Token nem található" });
+    res.status(401).json({ message: "Access és/vagy Refresh token nem található" });
   else {
     verifyJwt(access_token, refresh_token)
       .then((data) => {
@@ -25,6 +25,11 @@ router.get("/verify", (req, res) => {
         } else {
           res.cookie("access_token", data, {
             maxAge: 24 * 60 * 60 * 1000,
+            sameSite: "none",
+            secure: true,
+            httpOnly: false,
+            domain: "pollak.info",
+            path: "/",
           });
           res.status(200).json({ message: "Refreshed" });
         }

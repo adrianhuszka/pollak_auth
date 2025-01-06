@@ -18,6 +18,7 @@ const corsOptions = {
     "https://pollak.info",
     /https:\/\/[a-z0-9]+\.pollak\.info/,
     "http://10.0.0.251:3013",
+    "https://pollakbufe.hu"
   ],
   credentials: true,
   optionsSuccessStatus: 200,
