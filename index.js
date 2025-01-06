@@ -26,20 +26,22 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.use(express.json());
 app.use(cookieParser());
-app.use(session({
-  name: "sid",
-  secret: "test",
-  resave: false,
-  saveUninitialized:true,
-  proxy: true,
-  cookie: {
-    httpOnly: true,
-    secure: true,
-    maxAge:24 * 60 * 60 * 1000,
-    domain:"pollak.info",
-    sameSite: "none"
-  }
-}))
+app.use(
+  session({
+    name: "sid",
+    secret: "test",
+    resave: false,
+    saveUninitialized: true,
+    proxy: true,
+    cookie: {
+      httpOnly: true,
+      secure: true,
+      maxAge: 24 * 60 * 60 * 1000,
+      domain: "pollak.info",
+      sameSite: "none",
+    },
+  })
+);
 
 app.set("view engine", "ejs");
 
@@ -49,9 +51,7 @@ app.use("/group", verifyUserGroups(["ADMIN"]), groupController);
 app.use("/static", express.static("public"));
 
 app.get("/", async (req, res) => {
-  res.render("index", {
-    
-  });
+  res.render("index", {});
 });
 
 app.get("/table", verifyUserGroups(["ADMIN", "USER"]), async (req, res) => {
@@ -69,7 +69,6 @@ app.get("/groups", verifyUserGroups(["ADMIN", "USER"]), async (req, res) => {
     groups: groups,
   });
 });
-
 
 app.get("/token", verifyUserGroups(["ADMIN"]), async (req, res) => {
   res.render("token", {
@@ -92,3 +91,5 @@ app.get("/register", async (req, res) => {
 app.listen(3300, () => {
   console.log("http://localhost:3300");
 });
+
+export default app;
