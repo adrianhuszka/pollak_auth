@@ -28,6 +28,7 @@ export async function verifyJwt(access_token, refresh_token) {
           );
 
           console.log(tokenWithIgnore);
+          console.log(ref);
 
           if (ref.sub === tokenWithIgnore.sub) {
             resolve(
@@ -65,14 +66,11 @@ async function verifyWithIgnoreExpiration(token) {
   const data = await prisma.maindata.findFirst();
   let ret;
   try {
-    console.log("Data fetched from database:", data);
     ret = jwt.verify(token, data.JWTSecret, {
       algorithm: data.JWTAlgorithm,
       ignoreExpiration: true,
     });
-    console.log("Token verification result:", ret);
   } catch (err) {
-    console.error("Error during token verification:", err);
     ret = null;
   }
 
