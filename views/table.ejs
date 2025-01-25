@@ -193,11 +193,10 @@
           groupId: groupSelect.value,
         }),
       })
-        .then(async (res) => {
-          console.log(res);
-          const data = await res.json();
+        .then((res) => {
+          console.log(res.status === 200);
 
-          if (data.success) {
+          if (res.status === 200) {
             location.reload();
           }
         })

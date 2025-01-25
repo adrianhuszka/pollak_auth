@@ -14,8 +14,6 @@ import {
 
 const router = express.Router();
 
-
-
 router.get("/getAll", async (req, res) => {
   try {
     const users = await GetAllUsers();
@@ -40,9 +38,9 @@ router.get("/forgot-password", async (req, res) => {
 
 // név és email változtatás
 router.put("/update", async (req, res) => {
-  const { id, username, email } = req.body;
+  const { id, username, email, groupId } = req.body;
   try {
-    const user = await userUpdate(id, username, email);
+    const user = await userUpdate(id, username, email, groupId);
     res.status(200).json(user);
   } catch (error) {
     res.status(400).json({ message: error.message });

@@ -5,14 +5,11 @@ import jwt from "jsonwebtoken";
 
 const prisma = new PrismaClient();
 
-
-
 export async function GetAllUsers() {
   const users = await prisma.user.findMany();
 
   return users;
 }
-
 
 export async function forgotPassword(id) {
   const newPwd = Math.random().toString(36).slice(-8);
@@ -29,7 +26,7 @@ export async function forgotPassword(id) {
   return newPwd;
 }
 
-export async function userUpdate(id, nev, email) {
+export async function userUpdate(id, nev, email, groupId) {
   await prisma.user.update({
     where: {
       id: id,
@@ -37,6 +34,7 @@ export async function userUpdate(id, nev, email) {
     data: {
       username: nev,
       email: email,
+      groupId: groupId,
     },
   });
 }
@@ -56,10 +54,10 @@ export async function Groups() {
 }
 
 export async function getAllUsersById(id) {
-      const data = await prisma.user.findMany({
-        where: {
-          id: id
-        },
-      });
-      return data;
+  const data = await prisma.user.findMany({
+    where: {
+      id: id,
+    },
+  });
+  return data;
 }
