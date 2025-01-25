@@ -17,7 +17,7 @@ export function verifyUserGroups(groups = []) {
 
     const verified = await verifyJwt(access_token, refresh_token);
 
-    if (verified !== "OK")
+    if (verified !== "OK" && verified !== "Refreshed")
       return res.status(401).json({ message: "Token Expired" });
 
     const { sub } = jwtDecode(access_token);

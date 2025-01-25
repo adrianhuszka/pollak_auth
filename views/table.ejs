@@ -184,6 +184,7 @@
         headers: {
           "Content-Type": "application/json",
         },
+        credentials: "include",
         method: "PUT",
         body: JSON.stringify({
           id: id,
@@ -192,8 +193,10 @@
           groupId: groupSelect.value,
         }),
       })
-        .then((res) => res.json())
-        .then((data) => {
+        .then(async (res) => {
+          console.log(res);
+          const data = await res.json();
+
           if (data.success) {
             location.reload();
           }
