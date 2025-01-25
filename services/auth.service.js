@@ -23,12 +23,21 @@ export async function verifyJwt(access_token, refresh_token) {
 
         if (err && err.message === "jwt expired") {
           const ref = verifyRefreshToken(refresh_token);
-          const tokenWithIgnore = await verifyWithIgnoreExpiration(access_token);
+          const tokenWithIgnore = await verifyWithIgnoreExpiration(
+            access_token
+          );
 
-          console.log(tokenWithIgnore)
+          console.log(tokenWithIgnore);
 
           if (ref.sub === tokenWithIgnore.sub) {
-            resolve(createNewToken(tokenWithIgnore.sub, tokenWithIgnore.nev, tokenWithIgnore.email, tokenWithIgnore.userGroup));
+            resolve(
+              createNewToken(
+                tokenWithIgnore.sub,
+                tokenWithIgnore.nev,
+                tokenWithIgnore.email,
+                tokenWithIgnore.userGroup
+              )
+            );
           } else {
             reject("Error Refreshing the token");
           }
@@ -56,11 +65,14 @@ async function verifyWithIgnoreExpiration(token) {
   const data = await prisma.maindata.findFirst();
   let ret;
   try {
+    console.log('Data fetched from database:', data);
     ret = jwt.verify(token, data.JWTExpiration, {
       algorithm: data.RefreshTokenExpiration,
       ignoreExpiration: true,
     });
+    console.log('Token verification result:', ret);
   } catch (err) {
+    console.error('Error during token verification:', err);
     ret = null;
   }
 
@@ -70,7 +82,7 @@ async function verifyWithIgnoreExpiration(token) {
 async function createNewToken(id, nev, email, groupsNeve) {
   const data = await prisma.maindata.findFirst();
 
-  console.log("Creating token with: ", id, nev, email, groupsNeve)
+  console.log("Creating token with: ", id, nev, email, groupsNeve);
 
   return jwt.sign(
     {
