@@ -18,7 +18,7 @@ const corsOptions = {
     "https://pollak.info",
     /https:\/\/[a-z0-9]+\.pollak\.info/,
     "http://10.0.0.251:3013",
-    "https://pollakbufe.hu"
+    "https://pollakbufe.hu",
   ],
   credentials: true,
   optionsSuccessStatus: 200,
@@ -55,7 +55,7 @@ app.get("/", async (req, res) => {
   res.render("index", {});
 });
 
-app.get("/table", verifyUserGroups(["ADMIN", "USER"]), async (req, res) => {
+app.get("/table", verifyUserGroups(["ADMIN"]), async (req, res) => {
   const userData = await GetAllUsers();
   const groupsData = await Groups();
   res.render("table", {
@@ -64,7 +64,7 @@ app.get("/table", verifyUserGroups(["ADMIN", "USER"]), async (req, res) => {
   });
 });
 
-app.get("/groups", verifyUserGroups(["ADMIN", "USER"]), async (req, res) => {
+app.get("/groups", verifyUserGroups(["ADMIN"]), async (req, res) => {
   const groups = await listAllGroup();
   res.render("groups", {
     groups: groups,

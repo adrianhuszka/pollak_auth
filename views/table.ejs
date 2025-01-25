@@ -152,10 +152,10 @@
               </button>
             </td>
             <td>
-              <select class="form-select" id="floatingSelect">
+              <select class="form-select" id="<%= element.id %>group">
                 <option selected><%= element.groupsNeve %></option>
-                <% groups.forEach(element => { %>
-                <option value="<%= element.id %>"><%= element.neve %></option>
+                <% groups.forEach(group => { %>
+                <option value="<%= group.neve %>"><%= group.neve %></option>
                 <% }) %>
               </select>
             </td>
