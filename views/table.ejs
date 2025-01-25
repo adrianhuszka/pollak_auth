@@ -136,12 +136,12 @@
               <input id="<%= element.id %>email" value="<%= element.email %>" />
             </td>
             <td>
-              <button
-                class="btn btn-danger"
-                onclick="Delete('<%= element.id %>')"
-              >
-                Törlés
-              </button>
+              <select class="form-select" id="<%= element.id %>group">
+                <option selected><%= element.groupsNeve %></option>
+                <% groups.forEach(group => { %>
+                <option value="<%= group.neve %>"><%= group.neve %></option>
+                <% }) %>
+              </select>
             </td>
             <td>
               <button
@@ -152,12 +152,12 @@
               </button>
             </td>
             <td>
-              <select class="form-select" id="<%= element.id %>group">
-                <option selected><%= element.groupsNeve %></option>
-                <% groups.forEach(group => { %>
-                <option value="<%= group.neve %>"><%= group.neve %></option>
-                <% }) %>
-              </select>
+              <button
+                class="btn btn-danger"
+                onclick="Delete('<%= element.id %>')"
+              >
+                Törlés
+              </button>
             </td>
           </tr>
           <% }); %>
