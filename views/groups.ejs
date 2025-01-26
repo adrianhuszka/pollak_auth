@@ -1,110 +1,10 @@
 <!DOCTYPE html>
 <html lang="en" data-bs-theme="dark">
   <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-    />
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <title>Csoportok</title>
-    <style>
-      body {
-        background-color: #1c1c1c;
-        color: #f1f1f1;
-        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-      }
-      .btn-outline-primary,
-      .btn-outline-danger,
-      .btn-outline-info {
-        border-radius: 25px;
-        transition: all 0.3s ease;
-      }
-      .btn-outline-primary:hover,
-      .btn-outline-danger:hover,
-      .btn-outline-info:hover {
-        transform: scale(1.05);
-      }
-      .modal-content {
-        border-radius: 15px;
-      }
-      .accordion-button {
-        background-color: #343a40;
-        color: white;
-        border-radius: 10px;
-      }
-      .accordion-button:hover {
-        background-color: #495057;
-      }
-      .accordion-button:focus {
-        box-shadow: none;
-      }
-      .accordion-collapse {
-        background-color: #343a40;
-      }
-      .accordion-body {
-        font-size: 0.9rem;
-      }
-      input,
-      select {
-        border-radius: 10px;
-        padding: 8px;
-        margin-top: 5px;
-        width: 100%;
-      }
-      .accordion-item {
-        margin-bottom: 20px;
-      }
-      .table th,
-      .table td {
-        text-align: center;
-      }
-      .table th {
-        background-color: #495057;
-      }
-
-      .navbar {
-        margin-bottom: 30px;
-      }
-
-      .navbar-brand {
-        display: none;
-      }
-
-      .navbar-nav {
-        margin-left: auto;
-        margin-right: auto;
-      }
-
-      .navbar-nav .nav-item {
-        margin-right: 15px;
-      }
-
-      .nav-link {
-        font-size: 1.2rem;
-      }
-    </style>
+    <%- include('partials/header', {title: "Csoportkezelés"} ) %>
   </head>
   <body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-      <div class="container-fluid">
-        <div class="collapse navbar-collapse">
-          <ul class="navbar-nav">
-            <li class="nav-item">
-              <a class="nav-link" href="/token">Token</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="/table">Felhasználók</a>
-            </li>
-
-            <button class="nav-link btn btn-danger ms-auto" onclick="logout()">
-              Log out
-            </button>
-          </ul>
-        </div>
-      </div>
-    </nav>
+    <%- include('partials/nav') %>
 
     <div
       class="container-fluid h-100 d-flex justify-content-center align-items-center flex-column mt-3"
@@ -348,23 +248,3 @@
     </div>
   </body>
 </html>
-
-<script>
-  function logout() {
-    fetch("/auth/logout", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      credentials: "include",
-    })
-      .then((response) => {
-        if (response.ok) {
-          window.location.href = "/";
-        } else {
-          console.error("Logout failed");
-        }
-      })
-      .catch((error) => console.error("Error during logout:", error));
-  }
-</script>
