@@ -34,7 +34,7 @@ export async function userUpdate(id, nev, email, groupId) {
     data: {
       username: nev,
       email: email,
-      groupId: groupId,
+      groupsNeve: groupId,
     },
   });
 }
