@@ -12,11 +12,17 @@ import { Kuldes } from "../services/emailsender.js";
 const router = express.Router();
 
 router.get("/verify", (req, res) => {
-  const access_token = req.cookies.access_token ? req.cookies.access_token : req.headers.authorization.split(" ")[1];
-  const refresh_token = req.cookies.refresh_token ? req.cookies.refresh_token : req.headers.refreshtoken;
+  const access_token = req.cookies.access_token
+    ? req.cookies.access_token
+    : req.headers.authorization.split(" ")[1];
+  const refresh_token = req.cookies.refresh_token
+    ? req.cookies.refresh_token
+    : req.headers.refreshtoken;
 
   if (!access_token || !refresh_token)
-    res.status(401).json({ message: "Access és/vagy Refresh token nem található" });
+    res
+      .status(401)
+      .json({ message: "Access és/vagy Refresh token nem található" });
   else {
     verifyJwt(access_token, refresh_token)
       .then((data) => {

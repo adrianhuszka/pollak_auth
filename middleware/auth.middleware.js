@@ -7,18 +7,37 @@ const prisma = new PrismaClient();
 
 export function verifyUserGroups(groups = []) {
   return async (req, res, next) => {
-    const access_token = req.cookies.access_token ? req.cookies.access_token : req.headers.Authorization;
-    const refresh_token = req.cookies.refresh_token ? req.cookies.refresh_token : req.headers.RefreshToken;
+    let access_token = req.cookies.access_token
+      ? req.cookies.access_token
+      : req.headers.Authorization;
+    const refresh_token = req.cookies.refresh_token
+      ? req.cookies.refresh_token
+      : req.headers.RefreshToken;
 
     // if (!req.session.user_id) return res.status(401).json({ message: "Access Denied" });
 
     if (!access_token)
       return res.status(401).json({ message: "Access Denied" });
 
-    const verified = await verifyJwt(access_token, refresh_token);
-
-    if (verified !== "OK" && verified !== "Refreshed")
-      return res.status(401).json({ message: "Token Expired" });
+    verifyJwt(access_token, refresh_token)
+      .then((data) => {
+        if (data !== "OK" && data) {
+          access_token = data;
+          res.cookie("access_token", data, {
+            maxAge: 24 * 60 * 60 * 1000,
+            sameSite: "none",
+            secure: true,
+            httpOnly: false,
+            domain: "pollak.info",
+            path: "/",
+          });
+        }
+      })
+      .catch((err) => {
+        res.clearCookie("access_token");
+        res.clearCookie("refresh_token");
+        res.status(403).json({ message: err });
+      });
 
     const { sub } = jwtDecode(access_token);
 
