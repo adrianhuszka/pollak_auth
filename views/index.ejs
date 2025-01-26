@@ -52,6 +52,28 @@
       const username = document.getElementById("username");
       const password = document.getElementById("password");
 
+      window.onload = function () {
+        const access_token = getCookie("access_token");
+
+        if (access_token) {
+          const jocookie = parseJwt(access_token);
+
+          if (jocookie.userGroup === "ADMIN") {
+            openModal(
+              "Üdvözöljük ADMIN!",
+              "belépés ADMIN-ként",
+              "https://auth.pollak.info/table"
+            );
+          } else {
+            openModal(
+              "Üdvözöljük USER!",
+              "belépés USER-ként",
+              "https://pollak.info/"
+            );
+          }
+        }
+      };
+
       function getCookie(cname) {
         let name = cname + "=";
         let ca = document.cookie.split(";");
@@ -119,7 +141,7 @@
             openModal(
               "Üdvözöljük USER!",
               "belépés USER-ként",
-              "https://auth.pollak.info/"
+              "https://pollak.info/"
             );
           }
         });
