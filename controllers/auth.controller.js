@@ -37,7 +37,7 @@ router.get("/verify", (req, res) => {
             domain: "pollak.info",
             path: "/",
           });
-          res.status(200).json({ message: "Refreshed" });
+          res.status(200).json({ message: "Refreshed", access_token: data });
         }
       })
       .catch((err) => {
