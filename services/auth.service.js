@@ -27,16 +27,14 @@ export async function verifyJwt(access_token, refresh_token) {
             access_token
           );
 
-          console.log(tokenWithIgnore);
-          console.log(ref);
-
           if (ref.sub === tokenWithIgnore.sub) {
             resolve(
               createNewToken(
                 tokenWithIgnore.sub,
                 tokenWithIgnore.nev,
                 tokenWithIgnore.email,
-                tokenWithIgnore.userGroup
+                tokenWithIgnore.userGroup,
+                tokenWithIgnore.om
               )
             );
           } else {
@@ -77,10 +75,8 @@ async function verifyWithIgnoreExpiration(token) {
   return ret;
 }
 
-async function createNewToken(id, nev, email, groupsNeve) {
+async function createNewToken(id, nev, email, groupsNeve, om) {
   const data = await prisma.maindata.findFirst();
-
-  console.log("Creating token with: ", id, nev, email, groupsNeve);
 
   return jwt.sign(
     {
@@ -88,6 +84,7 @@ async function createNewToken(id, nev, email, groupsNeve) {
       name: nev,
       email: email,
       userGroup: groupsNeve,
+      om: om,
     },
     data.JWTSecret,
     {
@@ -142,6 +139,7 @@ export async function login(username, password) {
       name: user.nev,
       email: user.email,
       userGroup: user.groupsNeve,
+      om: user.om,
     },
     data.JWTSecret,
     {
