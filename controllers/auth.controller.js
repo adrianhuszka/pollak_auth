@@ -182,6 +182,7 @@ router.post("/email", async (req, res) => {
 });
 
 router.post("/logout", (req, res) => {
+  req.session.destroy();
   res.clearCookie("access_token", {
     domain: "pollak.info",
     path: "/",
