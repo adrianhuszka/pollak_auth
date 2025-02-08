@@ -1,6 +1,6 @@
 model Groups {
-  neve String @id
-  users User[]
+  neve   String  @id
+  users  User[]
   write  Boolean @default(false)
   read   Boolean @default(false)
   update Boolean @default(false)

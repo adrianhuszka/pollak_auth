@@ -1,10 +1,10 @@
 model User {
-  id       String @id @default(uuid())
-  username String @unique
-  password String
-  nev      String
-  email    String @unique
-  ForgotToken String? @unique @db.VarChar(100)
+  id                   String    @id @default(uuid())
+  username             String    @unique
+  password             String
+  nev                  String
+  email                String    @unique
+  ForgotToken          String?   @unique @db.VarChar(100)
   ForgotTokenExpiresAt DateTime?
 
   om      String @unique

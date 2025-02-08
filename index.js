@@ -9,6 +9,9 @@ import { groupController } from "./controllers/group.controller.js";
 import { listAllGroup } from "./services/group.service.js";
 import { listAllTokens } from "./services/auth.service.js";
 import { verifyUserGroups } from "./middleware/auth.middleware.js";
+import { jwtDecode } from "./lib/jwt.js";
+import { PrismaSessionStore } from "@quixo3/prisma-session-store";
+import { PrismaClient } from "@prisma/client";
 
 const app = express();
 
@@ -25,25 +28,56 @@ const corsOptions = {
   optionsSuccessStatus: 200,
 };
 
+const expressSessionStore = new PrismaSessionStore(new PrismaClient(), {
+  checkPeriod: 2 * 60 * 1000, // 2 minutes
+  dbRecordIdIsSessionId: true,
+  dbRecordIdFunction: undefined,
+});
+
+const expressSession = session({
+  name: "sid",
+  secret: "test",
+  resave: false,
+  saveUninitialized: true,
+  proxy: true,
+  store: expressSessionStore,
+  cookie: {
+    httpOnly: true,
+    secure: true,
+    maxAge: 24 * 60 * 60 * 1000,
+    domain: "pollak.info",
+    sameSite: "none",
+  },
+});
+// TODO: REMOVE LOCALHOST
+// const expressSession = session({
+//   name: "sid",
+//   secret: "test",
+//   resave: false,
+//   saveUninitialized: false,
+//   proxy: false,
+//   store: expressSessionStore,
+//   cookie: {
+//     httpOnly: true,
+//     secure: false,
+//     maxAge: 24 * 60 * 60 * 1000,
+//     sameSite: "lax",
+//   },
+// });
+
 app.use(cors(corsOptions));
 app.use(express.json());
 app.use(cookieParser());
-app.use(
-  session({
-    name: "sid",
-    secret: "test",
-    resave: false,
-    saveUninitialized: true,
-    proxy: true,
-    cookie: {
-      httpOnly: true,
-      secure: true,
-      maxAge: 24 * 60 * 60 * 1000,
-      domain: "pollak.info",
-      sameSite: "none",
-    },
-  })
-);
+app.use(expressSession);
+
+app.use((req, res, next) => {
+  if (req.session) {
+    req.session.userIp =
+      req.headers["x-forwarded-for"] || req.connection.remoteAddress;
+    req.session.userAgent = req.headers["user-agent"];
+  }
+  next();
+});
 
 app.set("view engine", "ejs");
 
@@ -55,6 +89,20 @@ app.use("/static", express.static("public"));
 app.get("/", async (req, res) => {
   res.render("index", {});
 });
+
+app.get(
+  "/gateway",
+  verifyUserGroups(["ADMIN", "USER", "MODERATOR"]),
+  async (req, res) => {
+    const decoded = await jwtDecode(
+      req.cookies.access_token,
+      req.cookies.refresh_token
+    );
+    res.render("gateway", {
+      data: decoded,
+    });
+  }
+);
 
 app.get("/table", verifyUserGroups(["ADMIN"]), async (req, res) => {
   const userData = await GetAllUsers();

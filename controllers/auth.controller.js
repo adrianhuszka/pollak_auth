@@ -8,6 +8,7 @@ import {
   register,
 } from "../services/auth.service.js";
 import { Kuldes } from "../services/emailsender.js";
+import { body, validationResult } from "express-validator";
 
 const router = express.Router();
 
@@ -59,40 +60,52 @@ router.post("/register", async (req, res) => {
   }
 });
 
-router.post("/login", async (req, res) => {
-  const { username, password } = req.body;
+router.post(
+  "/login",
+  body("username").notEmpty().withMessage("A felhasználónév nem lehet üres!"),
+  body("password").notEmpty().withMessage("A jelszó nem lehet üres!"),
+  async (req, res) => {
+    const result = validationResult(req);
 
-  try {
-    const user = await login(username, password);
-
-    if (!user.access_token || !user.refresh_token) {
-      res.status(401).json({ message: "Hibás felhasználó név vagy jelszó!" });
+    if (!result.isEmpty()) {
+      res.status(400).json({ message: result.array() });
       return;
     }
-    res.cookie("access_token", user.access_token, {
-      maxAge: 24 * 60 * 60 * 1000,
-      sameSite: "none",
-      secure: true,
-      httpOnly: false,
-      domain: "pollak.info",
-      path: "/",
-    });
-    res.cookie("refresh_token", user.refresh_token, {
-      maxAge: 24 * 60 * 60 * 1000,
-      httpOnly: false,
-      sameSite: "none",
-      secure: true,
-      domain: "pollak.info",
-      path: "/",
-    });
 
-    req.session.user_id = user.user_id;
+    const { username, password } = req.body;
 
-    res.status(200).json(user);
-  } catch (error) {
-    res.status(400).json({ message: error.message });
+    try {
+      const user = await login(username, password);
+
+      if (!user.access_token || !user.refresh_token) {
+        res.status(401).json({ message: "Hibás felhasználó név vagy jelszó!" });
+        return;
+      }
+      res.cookie("access_token", user.access_token, {
+        maxAge: 24 * 60 * 60 * 1000,
+        sameSite: "none",
+        secure: true,
+        httpOnly: false,
+        domain: "pollak.info",
+        path: "/",
+      });
+      res.cookie("refresh_token", user.refresh_token, {
+        maxAge: 24 * 60 * 60 * 1000,
+        httpOnly: false,
+        sameSite: "none",
+        secure: true,
+        domain: "pollak.info",
+        path: "/",
+      });
+
+      req.session.user_id = user.user_id;
+
+      res.status(200).json(user);
+    } catch (error) {
+      res.status(400).json({ message: error.message });
+    }
   }
-});
+);
 
 router.put("/update", async (req, res) => {
   const {

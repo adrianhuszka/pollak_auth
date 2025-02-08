@@ -17,11 +17,11 @@ export async function verifyJwt(access_token, refresh_token) {
         algorithm: data.JWTAlgorithm,
       },
       async (err, decoded) => {
-        console.error(err);
-
         if (decoded) resolve("OK");
 
         if (err && err.message === "jwt expired") {
+          console.info("Token expired, refreshing token");
+
           const ref = await verifyRefreshToken(refresh_token);
           const tokenWithIgnore = await verifyWithIgnoreExpiration(
             access_token
@@ -168,15 +168,10 @@ export async function login(username, password) {
 
 export async function updateMainData(
   JWTAlgorithm,
-
   JWTExpiration,
-
   JWTSecret,
-
   RefreshTokenAlgorithm,
-
   RefreshTokenExpiration,
-
   RefreshTokenSecret
 ) {
   try {

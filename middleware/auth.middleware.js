@@ -14,7 +14,18 @@ export function verifyUserGroups(groups = []) {
       ? req.cookies.refresh_token
       : req.headers.RefreshToken;
 
-    // if (!req.session.user_id) return res.status(401).json({ message: "Access Denied" });
+    if (!req.session || !req.session.user_id) {
+      console.warn("No session found");
+
+      res.clearCookie("access_token");
+      res.clearCookie("refresh_token");
+
+      return res.status(401).json({ message: "Access Denied" });
+    } else {
+      console.info(
+        "Session OK, Logged in with user_id: " + req.session.user_id
+      );
+    }
 
     if (!access_token)
       return res.status(401).json({ message: "Access Denied" });
@@ -51,6 +62,11 @@ export function verifyUserGroups(groups = []) {
     });
 
     if (!user) return res.status(401).json({ message: "Access Denied" });
+
+    if (req.session.user_id !== user.id) {
+      console.warn("Session and user_id mismatch");
+      return res.status(401).json({ message: "Access Denied" });
+    }
 
     if (groups.includes(user.Groups.neve)) {
       switch (req.method) {

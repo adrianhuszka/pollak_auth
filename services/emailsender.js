@@ -14,9 +14,9 @@ export const transporter = nodemailer.createTransport({
 export async function Kuldes(useremail) {
   // send mail with defined transport object
   const info = await transporter.sendMail({
-    to: useremail, // list of receivers
-    subject: "Jelszó-visszaállítás", // Subject line
-    text: "[Jelszo link]", // plain text body
+    to: useremail,
+    subject: "Jelszó-visszaállítás",
+    text: "[Jelszo link]",
     html:
       "<div style='font-family: Arial, sans-serif; background-color: #f4f4f4; margin: 0; padding: 0; width: 100%; max-width: 600px;margin: 0 auto;background-color: #ffffff;padding: 20px;border-radius: 10px; box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);'>" +
       "<div style=' text-align: center; margin-bottom: 20px;'>" +

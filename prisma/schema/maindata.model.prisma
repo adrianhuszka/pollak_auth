@@ -1,11 +1,9 @@
-model maindata{
-
-id       String @id @default(uuid())
-JWTSecret String 
-JWTExpiration Int
-JWTAlgorithm String
-RefreshTokenSecret String
-RefreshTokenExpiration Int
-RefreshTokenAlgorithm String
-
+model maindata {
+  id                     String @id @default(uuid())
+  JWTSecret              String @db.VarChar(512)
+  JWTExpiration          Int
+  JWTAlgorithm           String
+  RefreshTokenSecret     String @db.VarChar(512)
+  RefreshTokenExpiration Int
+  RefreshTokenAlgorithm  String
 }

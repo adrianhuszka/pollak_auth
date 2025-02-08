@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="hu" data-bs-theme="dark">
+  <head>
+    <%- include('partials/header', {title: "Gateway"} ) %>
+  </head>
+  <body class="text-light">
+    <div
+      class="container d-flex justify-content-center align-items-center min-vh-100 w-50"
+    >
+      <div class="card p-3 shadow-lg">
+        <h3 class="text-center mb-4">Gateway</h3>
+        <div class="d-flex flex-column justify-content-center">
+          <h3>Üdvözöljük a Pollák Authenticatorban <%= data.name %>!</h3>
+          <h4>Válassz a menüpontok közül!</h4>
+          <div class="d-flex flex-column gap-3 mt-4">
+            <button class="btn btn-primary w-100" <%="data.groupName" %>
+              onclick="window.location.href = '/table'" > Adminisztráció
+            </button>
+            <button
+              class="btn btn-primary w-100"
+              onclick="window.location.href = '/table'"
+            >
+              Profil Szerkesztése
+            </button>
+            <button class="btn btn-danger w-100" onclick="logout()">
+              Kijelentkezés
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
