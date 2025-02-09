@@ -3,6 +3,7 @@ import {
   getUserById,
   userUpdateSelf,
   forgotPassword,
+  userUpdateSelfPassword,
 } from "../services/user.service.js";
 import { mfaSetup, mfaSetupFinal, mfaReset } from "../services/auth.service.js";
 import { body, validationResult } from "express-validator";
