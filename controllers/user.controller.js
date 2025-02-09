@@ -31,9 +31,9 @@ router.get("/get/:id", async (req, res) => {
 
 // név és email változtatás
 router.put("/update", async (req, res) => {
-  const { id, username, email, groupId } = req.body;
+  const { id, username, nev, email, groupId } = req.body;
   try {
-    const user = await userUpdate(id, username, email, groupId);
+    const user = await userUpdate(id, username, email, groupId, nev);
     res.status(200).json(user);
   } catch (error) {
     res.status(400).json({ message: error.message });

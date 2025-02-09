@@ -26,15 +26,16 @@ export async function forgotPassword(id) {
   return newPwd;
 }
 
-export async function userUpdate(id, nev, email, groupId) {
+export async function userUpdate(id, username, email, groupId, nev) {
   await prisma.user.update({
     where: {
       id: id,
     },
     data: {
-      username: nev,
+      username: username,
       email: email,
       groupsNeve: groupId,
+      nev: nev,
     },
   });
 }

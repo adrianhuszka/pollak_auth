@@ -106,7 +106,7 @@ export async function register(username, email, password, nev, om, groupsNeve) {
       password: pwdEncrypted,
       nev: nev,
       om: om,
-      groupsNeve: groupsNeve,
+      groupsNeve: groupsNeve ?? "USER",
     },
   });
 }

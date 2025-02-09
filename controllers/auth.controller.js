@@ -49,16 +49,51 @@ router.get("/verify", (req, res) => {
   }
 });
 
-router.post("/register", async (req, res) => {
-  const { username, email, password, nev, om, groupsNeve } = req.body;
-  try {
-    const user = await register(username, email, password, nev, om, groupsNeve);
-    res.status(201).json(user);
-  } catch (error) {
-    console.error(error);
-    res.status(400).json({ message: error.message });
+router.post(
+  "/register",
+  body("username").notEmpty().withMessage("A felhasználónév nem lehet üres!"),
+  body("email")
+    .notEmpty()
+    .withMessage("Az email nem lehet üres!")
+    .isEmail()
+    .withMessage("Az email nem megfelelő formátumú!"),
+  body("password")
+    .isStrongPassword({
+      minLength: 8,
+      minLowercase: 1,
+      minUppercase: 1,
+      minNumbers: 1,
+      minSymbols: 0,
+      returnScore: false,
+    })
+    .withMessage("A jelszó nem megfelelő formátumú!"),
+  body("nev").notEmpty().withMessage("A név nem lehet üres!"),
+  body("om").notEmpty().withMessage("Az OM azonosító nem lehet üres!"),
+  async (req, res) => {
+    const result = validationResult(req);
+
+    if (!result.isEmpty()) {
+      res.status(400).json({ message: result.array() });
+      return;
+    }
+
+    const { username, email, password, nev, om, groupsNeve } = req.body;
+    try {
+      const user = await register(
+        username,
+        email,
+        password,
+        nev,
+        om,
+        groupsNeve
+      );
+      res.status(201).json(user);
+    } catch (error) {
+      console.error(error);
+      res.status(400).json({ message: error.message });
+    }
   }
-});
+);
 
 router.post(
   "/login",
