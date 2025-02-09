@@ -5,6 +5,8 @@ import session from "express-session";
 import { userController } from "./controllers/user.controller.js";
 import { authController } from "./controllers/auth.controller.js";
 import selfController from "./controllers/self.controller.js";
+import omController from "./controllers/om.controller.js";
+import sessionController from "./controllers/session.controller.js";
 import { GetAllUsers, Groups } from "./services/user.service.js";
 import { groupController } from "./controllers/group.controller.js";
 import { listAllGroup } from "./services/group.service.js";
@@ -71,6 +73,8 @@ app.use("/user", verifyUserGroups(["ADMIN", "USER"]), userController);
 app.use("/auth", authController);
 app.use("/self", selfController);
 app.use("/group", verifyUserGroups(["ADMIN"]), groupController);
+app.use("/om", verifyUserGroups(["ADMIN"]), omController);
+app.use("/session", verifyUserGroups(["ADMIN"]), sessionController);
 app.use("/static", express.static("public"));
 
 app.get("/", async (req, res) => {
