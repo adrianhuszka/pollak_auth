@@ -1,5 +1,5 @@
 model OM {
-  kod  String @id
+  kod  String  @id
   name String? @db.VarChar(1024)
   User User?
 }

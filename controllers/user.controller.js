@@ -1,7 +1,3 @@
-// CRUD in Controller, + Service
-// regisztráció(POST), bejelentkezés(POST), jelszó visszaállítás(GET),
-// név és email változtatás(PUT), fiók törlés(DELETE)
-
 import express from "express";
 import { transporter } from "../services/emailsender.js";
 import {
@@ -10,6 +6,7 @@ import {
   userDelete,
   GetAllUsers,
   Groups,
+  getAllUsersById,
 } from "../services/user.service.js";
 
 const router = express.Router();
@@ -17,20 +14,16 @@ const router = express.Router();
 router.get("/getAll", async (req, res) => {
   try {
     const users = await GetAllUsers();
-    res.status(201).json(users);
+    res.status(200).json(users);
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
 });
 
-// bejelentkezés
-
-// jelszó visszaállítás
-router.get("/forgot-password", async (req, res) => {
-  const { id } = req.body;
+router.get("/get/:id", async (req, res) => {
   try {
-    const user = await forgotPassword(id);
-    res.status(200).json(user);
+    const users = await getUserById();
+    res.status(200).json(users);
   } catch (error) {
     res.status(400).json({ message: error.message });
   }

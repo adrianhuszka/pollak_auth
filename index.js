@@ -4,6 +4,7 @@ import cors from "cors";
 import session from "express-session";
 import { userController } from "./controllers/user.controller.js";
 import { authController } from "./controllers/auth.controller.js";
+import selfController from "./controllers/self.controller.js";
 import { GetAllUsers, Groups } from "./services/user.service.js";
 import { groupController } from "./controllers/group.controller.js";
 import { listAllGroup } from "./services/group.service.js";
@@ -49,21 +50,6 @@ const expressSession = session({
     sameSite: "none",
   },
 });
-// TODO: REMOVE LOCALHOST
-// const expressSession = session({
-//   name: "sid",
-//   secret: "test",
-//   resave: false,
-//   saveUninitialized: false,
-//   proxy: false,
-//   store: expressSessionStore,
-//   cookie: {
-//     httpOnly: true,
-//     secure: false,
-//     maxAge: 24 * 60 * 60 * 1000,
-//     sameSite: "lax",
-//   },
-// });
 
 app.use(cors(corsOptions));
 app.use(express.json());
@@ -83,6 +69,7 @@ app.set("view engine", "ejs");
 
 app.use("/user", verifyUserGroups(["ADMIN", "USER"]), userController);
 app.use("/auth", authController);
+app.use("/self", selfController);
 app.use("/group", verifyUserGroups(["ADMIN"]), groupController);
 app.use("/static", express.static("public"));
 

@@ -30,26 +30,6 @@ export function verifyUserGroups(groups = []) {
     if (!access_token)
       return res.status(401).json({ message: "Access Denied" });
 
-    // verifyJwt(access_token, refresh_token)
-    //   .then((data) => {
-    //     if (data !== "OK" && data) {
-    //       access_token = data;
-    //       res.cookie("access_token", data, {
-    //         maxAge: 24 * 60 * 60 * 1000,
-    //         sameSite: "none",
-    //         secure: true,
-    //         httpOnly: false,
-    //         domain: "pollak.info",
-    //         path: "/",
-    //       });
-    //     }
-    //   })
-    //   .catch((err) => {
-    //     res.clearCookie("access_token");
-    //     res.clearCookie("refresh_token");
-    //     res.status(403).json({ message: err });
-    //   });
-
     try {
       const data = await verifyJwt(access_token, refresh_token);
 

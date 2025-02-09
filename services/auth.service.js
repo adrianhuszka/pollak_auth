@@ -3,6 +3,8 @@ import crypto from "crypto";
 import { encrypt } from "../lib/hash.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import speakeasy from "speakeasy";
+import qrCode from "qrcode";
 
 const prisma = new PrismaClient();
 
@@ -236,4 +238,89 @@ export async function pwdChange(pwd1, pwd2, id) {
   } else {
     return false;
   }
+}
+
+export async function mfaSetup(userId) {
+  const secret = speakeasy.generateSecret();
+  const user = await prisma.user.update({
+    where: { id: userId },
+    data: {
+      mfaSecret: secret.base32,
+    },
+  });
+
+  const url = speakeasy.otpauthURL({
+    secret: secret.base32,
+    label: user.username,
+    issuer: "pollak.info",
+    encoding: "base32",
+  });
+
+  const qrImageUrl = await qrCode.toDataURL(url);
+
+  return {
+    secret: secret.base32,
+    qrCode: qrImageUrl,
+  };
+}
+
+export async function mfaSetupFinal(userId, otp) {
+  const verify = mfaVerify(userId, otp);
+
+  if (verify) {
+    await prisma.user.update({
+      where: { id: userId },
+      data: {
+        isMFAEnabled: true,
+      },
+    });
+
+    return {
+      message: "MFA sikeresen bekapcsolva",
+    };
+  }
+
+  return {
+    message: "Hibás OTP",
+  };
+}
+
+export async function mfaVerify(userId, otp) {
+  const user = await prisma.user.findFirst({
+    where: {
+      id: userId,
+    },
+  });
+
+  const verify = speakeasy.totp.verify({
+    secret: user.mfaSecret,
+    encoding: "base32",
+    token: otp,
+  });
+
+  if (verify) return true;
+
+  return false;
+}
+
+export async function mfaReset(userId, otp) {
+  const verify = mfaVerify(userId, otp);
+
+  if (verify) {
+    await prisma.user.update({
+      where: { id: userId },
+      data: {
+        MFASecret: null,
+        isMFAEnabled: false,
+      },
+    });
+
+    return {
+      message: "MFA sikeresen kikapcsolva",
+    };
+  }
+
+  return {
+    message: "Hibás OTP",
+  };
 }

@@ -61,3 +61,12 @@ export async function getAllUsersById(id) {
   });
   return data;
 }
+
+export async function getUserById(id) {
+  const data = await prisma.user.findFirst({
+    where: {
+      id: id,
+    },
+  });
+  return data;
+}
