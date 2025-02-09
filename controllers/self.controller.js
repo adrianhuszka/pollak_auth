@@ -1,15 +1,17 @@
 import express from "express";
 import {
   getUserById,
-  userUpdate,
+  userUpdateSelf,
   forgotPassword,
 } from "../services/user.service.js";
 import { mfaSetup, mfaSetupFinal, mfaReset } from "../services/auth.service.js";
+import { body, validationResult } from "express-validator";
 
 const router = express.Router();
 
 router.get("/", async (req, res) => {
   const userId = req.session.user_id;
+  console.log(userId);
   try {
     const user = await getUserById(userId);
     res.status(200).json(user);
@@ -18,16 +20,71 @@ router.get("/", async (req, res) => {
   }
 });
 
-router.put("/", async (req, res) => {
-  const userId = req.session.user_id;
-  const { username, email } = req.body;
-  try {
-    const user = await userUpdate(userId, username, email);
-    res.status(200).json(user);
-  } catch (error) {
-    res.status(400).json({ message: error.message });
+router.put(
+  "/",
+  body("username").isString().isLength({ min: 6 }),
+  body("email").isEmail(),
+  body("nev").isString().isLength({ min: 6 }),
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ message: errors.array() });
+    }
+
+    const userId = req.session.user_id;
+    const { username, email, nev } = req.body;
+
+    try {
+      const user = await userUpdateSelf(userId, username, email, nev);
+      res.status(200).json(user);
+    } catch (error) {
+      res.status(400).json({ message: error.message });
+    }
   }
-});
+);
+
+router.put(
+  "/password",
+  body("oldPassword").notEmpty().withMessage("A régi jelszó megadása kötelező"),
+  body("newPassword")
+    .isStrongPassword({
+      minLength: 8,
+      minLowercase: 1,
+      minUppercase: 1,
+      minNumbers: 1,
+    })
+    .withMessage(
+      "A jelszónak legalább 8 karakter hosszúnak kell lennie, legalább 1 kisbetűt, 1 nagybetűt és 1 számot kell tartalmaznia"
+    ),
+  body("newPassword2")
+    .custom((value, { req }) => {
+      if (value !== req.body.newPassword) {
+        return false;
+      }
+      return true;
+    })
+    .withMessage("A két jelszó nem egyezik"),
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ message: errors.array() });
+    }
+
+    const userId = req.session.user_id;
+    const { oldPassword, newPassword, newPassword2 } = req.body;
+
+    try {
+      const user = await userUpdateSelfPassword(
+        userId,
+        oldPassword,
+        newPassword
+      );
+      res.status(200).json(user);
+    } catch (error) {
+      res.status(400).json({ message: error.message });
+    }
+  }
+);
 
 router.post("/reset-password", async (req, res) => {
   const userId = req.session.user_id;

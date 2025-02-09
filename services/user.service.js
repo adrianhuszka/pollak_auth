@@ -39,6 +39,50 @@ export async function userUpdate(id, nev, email, groupId) {
   });
 }
 
+export async function userUpdateSelf(userId, username, email, nev) {
+  await prisma.user.update({
+    where: {
+      id: userId,
+    },
+    data: {
+      username: username,
+      email: email,
+      nev: nev,
+    },
+  });
+}
+
+export async function userUpdateSelfPassword(userId, oldPassword, newPassword) {
+  const user = await prisma.user.findFirst({
+    where: {
+      id: userId,
+    },
+  });
+
+  if (!user) {
+    throw new Error("User not found");
+  }
+
+  const isPasswordValid = await bcrypt.compare(oldPassword, user.password);
+
+  if (!isPasswordValid) {
+    throw new Error("Old password is invalid");
+  }
+
+  const hashedPassword = await encrypt(newPassword);
+
+  await prisma.user.update({
+    where: {
+      id: userId,
+    },
+    data: {
+      password: hashedPassword,
+    },
+  });
+
+  return user;
+}
+
 export async function userDelete(id) {
   await prisma.user.delete({
     where: {
