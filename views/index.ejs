@@ -57,25 +57,34 @@
       const password = document.getElementById("password");
 
       window.onload = function () {
-        const access_token = getCookie("access_token");
+        // const access_token = getCookie("access_token");
 
-        if (access_token) {
-          const jocookie = parseJwt(access_token);
+        // if (access_token) {
+        //   const jocookie = parseJwt(access_token);
 
-          if (jocookie.userGroup === "ADMIN") {
-            openModal(
-              "Üdvözöljük ADMIN!",
-              "belépés ADMIN-ként",
-              "/table"
-            );
-          } else {
-            openModal(
-              "Üdvözöljük USER!",
-              "belépés USER-ként",
-              "/"
-            );
-          }
-        }
+        //   if (jocookie.userGroup === "ADMIN") {
+        //     openModal(
+        //       "Üdvözöljük ADMIN!",
+        //       "belépés ADMIN-ként",
+        //       "/table"
+        //     );
+        //   } else {
+        //     openModal(
+        //       "Üdvözöljük USER!",
+        //       "belépés USER-ként",
+        //       "/"
+        //     );
+        //   }
+        // }
+
+        document.getElementById("modalTitle").textContent = "Üdvözöljük!";
+        document.getElementById("modalBody").textContent = "Új Felület érhető el!\nÁtirányítás folyamatban...";
+        document.getElementById("loginModal").style.display = "flex";
+
+        // 3 másodperc után átirányítunk
+        setTimeout(function () {
+          window.location.href = "https://gateway.pollak.info";
+        }, 3000); // 3000 ms = 3 másodperc
       };
 
       function Login(event) {
