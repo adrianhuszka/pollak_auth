@@ -112,10 +112,25 @@ router.post(
     try {
       const user = await login(username, password);
 
-      if (!user.access_token || !user.refresh_token) {
-        res.status(401).json({ message: "Hibás felhasználó név vagy jelszó!" });
-        return;
+      // TODO: Handle MFA timeout and db flag
+
+      if (user.isMfaRequired) {
+        req.session.user_id = user.user_id;
+        return res.status(401).json({ message: "MFA szükséges!" });
       }
+
+      if (!user.access_token || !user.refresh_token) {
+        return res
+          .status(401)
+          .json({ message: "Hibás felhasználó név vagy jelszó!" });
+      }
+
+      req.session.user_id = user.user_id;
+
+      if (user.isMfaRequired) {
+        return res.status(401).json({ message: "MFA szükséges!" });
+      }
+
       res.cookie("access_token", user.access_token, {
         maxAge: 24 * 60 * 60 * 1000,
         sameSite: "none",
@@ -132,8 +147,6 @@ router.post(
         domain: "pollak.info",
         path: "/",
       });
-
-      req.session.user_id = user.user_id;
 
       res.status(200).json(user);
     } catch (error) {

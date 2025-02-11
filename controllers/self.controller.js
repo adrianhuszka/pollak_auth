@@ -5,7 +5,12 @@ import {
   forgotPassword,
   userUpdateSelfPassword,
 } from "../services/user.service.js";
-import { mfaSetup, mfaSetupFinal, mfaReset } from "../services/auth.service.js";
+import {
+  mfaSetup,
+  mfaSetupFinal,
+  mfaReset,
+  mfaVerify,
+} from "../services/auth.service.js";
 import { body, validationResult } from "express-validator";
 
 const router = express.Router();
@@ -127,6 +132,18 @@ router.post("/mfa/reset", async (req, res) => {
 
   try {
     const data = await mfaReset(userId, otp);
+    res.status(200).json(data);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+});
+
+router.post("/mfa/verify", async (req, res) => {
+  const userId = req.session.user_id;
+  const { otp } = req.body;
+
+  try {
+    const data = await mfaVerify(userId, otp);
     res.status(200).json(data);
   } catch (error) {
     res.status(400).json({ message: error.message });

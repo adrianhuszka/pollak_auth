@@ -135,6 +135,10 @@ export async function login(username, password) {
     return { message: "Hiba történt" };
   }
 
+  if (user.isMFAEnabled) {
+    return { isMfaRequired: true, userId: user.id };
+  }
+
   const token = jwt.sign(
     {
       sub: user.id,
@@ -264,10 +268,64 @@ export async function mfaSetup(userId) {
   };
 }
 
-export async function mfaSetupFinal(userId, otp) {
-  const verify = mfaVerify(userId, otp);
+export async function mfaVerify(userId, otp) {
+  const user = await prisma.user.findFirst({
+    where: {
+      id: userId,
+    },
+  });
 
-  if (verify) {
+  const verify = speakeasy.totp.verify({
+    secret: user.mfaSecret,
+    encoding: "base32",
+    token: otp,
+  });
+
+  if (!verify) return { message: "Hibás OTP" };
+
+  const data = await prisma.maindata.findFirst();
+
+  if (!data) {
+    return { message: "Hiba történt" };
+  }
+
+  const token = jwt.sign(
+    {
+      sub: user.id,
+      name: user.nev,
+      email: user.email,
+      userGroup: user.groupsNeve,
+      om: user.om,
+    },
+    data.JWTSecret,
+    {
+      expiresIn: data.JWTExpiration,
+      algorithm: data.JWTAlgorithm,
+    }
+  );
+
+  const refreshToken = jwt.sign(
+    {
+      sub: user.id,
+    },
+    data.RefreshTokenSecret,
+    {
+      expiresIn: data.RefreshTokenExpiration,
+      algorithm: data.RefreshTokenAlgorithm,
+    }
+  );
+
+  return {
+    access_token: token,
+    refresh_token: refreshToken,
+    user_id: user.id,
+  };
+}
+
+export async function mfaSetupFinal(userId, otp) {
+  const verify = await mfaVerify(userId, otp);
+
+  if (verify?.message !== "Hibás OTP") {
     await prisma.user.update({
       where: { id: userId },
       data: {
@@ -285,28 +343,10 @@ export async function mfaSetupFinal(userId, otp) {
   };
 }
 
-export async function mfaVerify(userId, otp) {
-  const user = await prisma.user.findFirst({
-    where: {
-      id: userId,
-    },
-  });
-
-  const verify = speakeasy.totp.verify({
-    secret: user.mfaSecret,
-    encoding: "base32",
-    token: otp,
-  });
-
-  if (verify) return true;
-
-  return false;
-}
-
 export async function mfaReset(userId, otp) {
-  const verify = mfaVerify(userId, otp);
+  const verify = await mfaVerify(userId, otp);
 
-  if (verify) {
+  if (verify?.message !== "Hibás OTP") {
     await prisma.user.update({
       where: { id: userId },
       data: {
