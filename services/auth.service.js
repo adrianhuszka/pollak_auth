@@ -5,8 +5,10 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import speakeasy from "speakeasy";
 import qrCode from "qrcode";
+import { OAuth2Client } from "google-auth-library";
 
 const prisma = new PrismaClient();
+const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 export async function verifyJwt(access_token, refresh_token) {
   const data = await prisma.maindata.findFirst();
@@ -363,4 +365,66 @@ export async function mfaReset(userId, otp) {
   return {
     message: "Hibás OTP",
   };
+}
+
+export async function googleAuth(token, om) {
+  const ticket = await client.verifyIdToken({
+    idToken: token,
+    audience: process.env.GOOGLE_CLIENT_ID,
+  });
+
+  const payload = ticket.getPayload();
+  const email = payload.email;
+  const name = payload.name;
+  const googleId = payload.sub;
+  const username = email.split("@")[0];
+
+  let user = await prisma.user.findUnique({
+    where: { email: email },
+  });
+
+  if (!user) {
+    user = await prisma.user.create({
+      data: {
+        username: username,
+        email: email,
+        googleId: googleId,
+        groupsNeve: "USER",
+        nev: name,
+        om: om,
+        password: "",
+      },
+    });
+  } else {
+    user = await prisma.user.update({
+      where: { id: user.id },
+      data: {
+        googleId: googleId,
+      },
+    });
+  }
+
+  const jwtSecret = await prisma.maindata.findFirst();
+
+  const access_token = jwt.sign(
+    {
+      sub: user.id,
+      name: user.username,
+      email: user.email,
+      userGroup: user.groupsNeve,
+    },
+    jwtSecret.JWTSecret,
+    { expiresIn: jwtSecret.JWTExpiration, algorithm: jwtSecret.JWTAlgorithm }
+  );
+
+  const refresh_token = jwt.sign(
+    { sub: user.id },
+    jwtSecret.RefreshTokenSecret,
+    {
+      expiresIn: jwtSecret.RefreshTokenExpiration,
+      algorithm: jwtSecret.RefreshTokenAlgorithm,
+    }
+  );
+
+  return { access_token, refresh_token, user };
 }

@@ -6,6 +6,7 @@ import {
   pwdChange,
   login,
   register,
+  googleAuth
 } from "../services/auth.service.js";
 import { Kuldes } from "../services/emailsender.js";
 import { body, validationResult } from "express-validator";
@@ -244,6 +245,16 @@ router.post("/logout", (req, res) => {
     path: "/",
   });
   res.status(200).json({ message: "Logged out successfully" });
+});
+
+router.post("/googleAuth", async (req, res) => {
+  const { tokenId, om } = req.body;
+  try {
+    const user = await googleAuth(tokenId, om);
+    res.status(200).json(user);
+  } catch (err) {
+    console.error("Error logging in with Google: ", err);
+  }
 });
 
 export { router as authController };
