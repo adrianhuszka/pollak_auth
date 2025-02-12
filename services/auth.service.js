@@ -367,7 +367,7 @@ export async function mfaReset(userId, otp) {
   };
 }
 
-export async function googleAuth(token, om) {
+export async function googleVerifyToken(token, om) {
   const ticket = await client.verifyIdToken({
     idToken: token,
     audience: process.env.GOOGLE_CLIENT_ID,

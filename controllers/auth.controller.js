@@ -6,7 +6,7 @@ import {
   pwdChange,
   login,
   register,
-  googleAuth
+  googleVerifyToken,
 } from "../services/auth.service.js";
 import { Kuldes } from "../services/emailsender.js";
 import { body, validationResult } from "express-validator";
@@ -248,12 +248,43 @@ router.post("/logout", (req, res) => {
 });
 
 router.post("/googleAuth", async (req, res) => {
-  const { tokenId, om } = req.body;
+  const { token, om } = req.body;
   try {
-    const user = await googleAuth(tokenId, om);
-    res.status(200).json(user);
-  } catch (err) {
-    console.error("Error logging in with Google: ", err);
+    const { access_token, refresh_token, user } = await googleVerifyToken(
+      token,
+      om
+    );
+
+    res.cookie("access_token", access_token, {
+      maxAge: 24 * 60 * 60 * 1000,
+      sameSite: "none",
+      secure: true,
+      httpOnly: false,
+      domain: "pollak.info",
+      path: "/",
+    });
+    res.cookie("refresh_token", refresh_token, {
+      maxAge: 24 * 60 * 60 * 1000,
+      httpOnly: false,
+      sameSite: "none",
+      secure: true,
+      domain: "pollak.info",
+      path: "/",
+    });
+
+    req.session.user_id = user.id;
+
+    res
+      .status(200)
+      .json({
+        message: "Login successful",
+        access_token: access_token,
+        refresh_token: refresh_token,
+        user: user,
+      });
+  } catch (error) {
+    console.error("Google Auth Error:", error);
+    res.status(500).json({ message: "Authentication failed" });
   }
 });
 
