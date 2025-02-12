@@ -7,7 +7,7 @@ model User {
   ForgotToken          String?   @unique @db.VarChar(100)
   ForgotTokenExpiresAt DateTime?
 
-  googleId String @unique @db.VarChar(100)
+  googleId String? @db.VarChar(100)
 
   isMFAEnabled Boolean @default(false)
   mfaSecret    String?

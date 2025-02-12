@@ -7,6 +7,7 @@ import {
   login,
   register,
   googleVerifyToken,
+  googleVerifyTokenAddOm,
 } from "../services/auth.service.js";
 import { Kuldes } from "../services/emailsender.js";
 import { body, validationResult } from "express-validator";
@@ -248,12 +249,14 @@ router.post("/logout", (req, res) => {
 });
 
 router.post("/googleAuth", async (req, res) => {
-  const { token, om } = req.body;
+  const { token } = req.body;
   try {
-    const { access_token, refresh_token, user } = await googleVerifyToken(
-      token,
-      om
-    );
+    const { access_token, refresh_token, user, message } =
+      await googleVerifyToken(token);
+
+    if (message) {
+      return res.status(401).json({ message: message });
+    }
 
     res.cookie("access_token", access_token, {
       maxAge: 24 * 60 * 60 * 1000,
@@ -274,17 +277,56 @@ router.post("/googleAuth", async (req, res) => {
 
     req.session.user_id = user.id;
 
-    res
-      .status(200)
-      .json({
-        message: "Login successful",
-        access_token: access_token,
-        refresh_token: refresh_token,
-        user: user,
-      });
+    res.status(200).json({
+      message: "Login successful",
+      access_token: access_token,
+      refresh_token: refresh_token,
+      user: user,
+    });
   } catch (error) {
     console.error("Google Auth Error:", error);
-    res.status(500).json({ message: "Authentication failed" });
+    res.status(500).json({ message: "Authentikációs hiba" });
+  }
+});
+
+router.post("/googleAuthAddOm", async (req, res) => {
+  const { token, om } = req.body;
+  try {
+    const { access_token, refresh_token, user, message } =
+      await googleVerifyTokenAddOm(token, om);
+
+    if (message) {
+      return res.status(401).json({ message: message });
+    }
+
+    res.cookie("access_token", access_token, {
+      maxAge: 24 * 60 * 60 * 1000,
+      sameSite: "none",
+      secure: true,
+      httpOnly: false,
+      domain: "pollak.info",
+      path: "/",
+    });
+    res.cookie("refresh_token", refresh_token, {
+      maxAge: 24 * 60 * 60 * 1000,
+      httpOnly: false,
+      sameSite: "none",
+      secure: true,
+      domain: "pollak.info",
+      path: "/",
+    });
+
+    req.session.user_id = user.id;
+
+    res.status(200).json({
+      message: "Login successful",
+      access_token: access_token,
+      refresh_token: refresh_token,
+      user: user,
+    });
+  } catch (error) {
+    console.error("Google Auth Error:", error);
+    res.status(500).json({ message: "Authentikációs hiba" });
   }
 });
 

@@ -367,7 +367,7 @@ export async function mfaReset(userId, otp) {
   };
 }
 
-export async function googleVerifyToken(token, om) {
+export async function googleVerifyToken(token) {
   const ticket = await client.verifyIdToken({
     idToken: token,
     audience: process.env.GOOGLE_CLIENT_ID,
@@ -384,41 +384,105 @@ export async function googleVerifyToken(token, om) {
   });
 
   if (!user) {
-    user = await prisma.user.create({
-      data: {
-        username: username,
-        email: email,
-        googleId: googleId,
-        groupsNeve: "USER",
-        nev: name,
-        om: om,
-        password: "",
-      },
-    });
-  } else {
+    return { message: "Nincs megadva még OM azonosító!" };
+  }
+
+  if (user.googleId !== null && user.googleId !== googleId) {
+    return { message: "Ez a Google fiók már regisztrálva van!" };
+  }
+
+  if (user.googleId === null)
     user = await prisma.user.update({
       where: { id: user.id },
       data: {
         googleId: googleId,
       },
     });
-  }
 
   const jwtSecret = await prisma.maindata.findFirst();
 
   const access_token = jwt.sign(
     {
       sub: user.id,
-      name: user.username,
+      name: user.nev,
       email: user.email,
       userGroup: user.groupsNeve,
+      om: user.om,
     },
     jwtSecret.JWTSecret,
-    { expiresIn: jwtSecret.JWTExpiration, algorithm: jwtSecret.JWTAlgorithm }
+    {
+      expiresIn: jwtSecret.JWTExpiration,
+      algorithm: jwtSecret.JWTAlgorithm,
+    }
   );
 
   const refresh_token = jwt.sign(
-    { sub: user.id },
+    {
+      sub: user.id,
+    },
+    jwtSecret.RefreshTokenSecret,
+    {
+      expiresIn: jwtSecret.RefreshTokenExpiration,
+      algorithm: jwtSecret.RefreshTokenAlgorithm,
+    }
+  );
+
+  return { access_token, refresh_token, user };
+}
+
+export async function googleVerifyTokenAddOm(token, om) {
+  const ticket = await client.verifyIdToken({
+    idToken: token,
+    audience: process.env.GOOGLE_CLIENT_ID,
+  });
+
+  const payload = ticket.getPayload();
+  const email = payload.email;
+  const name = payload.name;
+  const googleId = payload.sub;
+  const username = email.split("@")[0] + Math.floor(Math.random() * 10000);
+
+  let user = await prisma.user.findUnique({
+    where: { email: email },
+  });
+
+  if (user) {
+    return { message: "Ez az email cím már regisztrálva van!" };
+  }
+
+  user = await prisma.user.create({
+    data: {
+      username: username,
+      email: email,
+      nev: name,
+      om: om,
+      groupsNeve: "USER",
+      googleId: googleId,
+      password: "",
+    },
+  });
+
+  const jwtSecret = await prisma.maindata.findFirst();
+
+  const access_token = jwt.sign(
+    {
+      sub: user.id,
+      name: user.nev,
+      email: user.email,
+      userGroup: user.groupsNeve,
+      om: user.om,
+    },
+    jwtSecret.JWTSecret,
+    {
+      expiresIn: jwtSecret.JWTExpiration,
+      algorithm: jwtSecret.JWTAlgorithm,
+    }
+  );
+
+  const refresh_token = jwt.sign(
+    {
+      sub: user.id,
+    },
     jwtSecret.RefreshTokenSecret,
     {
       expiresIn: jwtSecret.RefreshTokenExpiration,
