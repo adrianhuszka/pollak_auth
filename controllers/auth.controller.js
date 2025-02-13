@@ -262,7 +262,6 @@ router.post("/googleAuth", async (req, res) => {
       secure: true,
       httpOnly: false,
       domain: "pollak.info",
-      path: "/",
     });
     res.cookie("refresh_token", refresh_token, {
       maxAge: 24 * 60 * 60 * 1000,
@@ -270,7 +269,6 @@ router.post("/googleAuth", async (req, res) => {
       sameSite: "none",
       secure: true,
       domain: "pollak.info",
-      path: "/",
     });
 
     req.session.user_id = user.id;

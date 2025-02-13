@@ -144,6 +144,22 @@ router.post("/mfa/verify", async (req, res) => {
 
   try {
     const data = await mfaVerify(userId, otp);
+
+    res.cookie("access_token", data.access_token, {
+      maxAge: 24 * 60 * 60 * 1000,
+      sameSite: "none",
+      secure: true,
+      httpOnly: false,
+      domain: "pollak.info",
+    });
+    res.cookie("refresh_token", data.refresh_token, {
+      maxAge: 24 * 60 * 60 * 1000,
+      httpOnly: false,
+      sameSite: "none",
+      secure: true,
+      domain: "pollak.info",
+    });
+
     res.status(200).json(data);
   } catch (error) {
     res.status(400).json({ message: error.message });
