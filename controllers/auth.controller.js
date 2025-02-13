@@ -139,7 +139,6 @@ router.post(
         secure: true,
         httpOnly: false,
         domain: "pollak.info",
-        path: "/",
       });
       res.cookie("refresh_token", user.refresh_token, {
         maxAge: 24 * 60 * 60 * 1000,
@@ -147,7 +146,6 @@ router.post(
         sameSite: "none",
         secure: true,
         domain: "pollak.info",
-        path: "/",
       });
 
       res.status(200).json(user);
