@@ -8,6 +8,7 @@ import {
   Groups,
   getAllUsersById,
   getUserByOm,
+  getUserById,
 } from "../services/user.service.js";
 
 const router = express.Router();
@@ -23,7 +24,7 @@ router.get("/getAll", async (req, res) => {
 
 router.get("/get/:id", async (req, res) => {
   try {
-    const users = await getUserById();
+    const users = await getUserById(req.params.id);
     res.status(200).json(users);
   } catch (error) {
     res.status(400).json({ message: error.message });
