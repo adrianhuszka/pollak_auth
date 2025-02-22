@@ -131,11 +131,7 @@ router.post(
           .json({ message: "Hibás felhasználó név vagy jelszó!" });
       }
 
-      req.session.user_id = user.userId;
-
-      if (user.isMfaRequired) {
-        return res.status(401).json({ message: "MFA szükséges!" });
-      }
+      req.session.user_id = user.user_id;
 
       const sessionDomain = req.hostname.includes("pollak.info")
         ? "pollak.info"
