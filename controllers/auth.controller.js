@@ -137,19 +137,23 @@ router.post(
         return res.status(401).json({ message: "MFA szükséges!" });
       }
 
+      const sessionDomain = req.hostname.includes("pollak.info")
+        ? "pollak.info"
+        : undefined;
+
       res.cookie("access_token", user.access_token, {
         maxAge: 24 * 60 * 60 * 1000,
-        sameSite: "none",
-        secure: true,
+        sameSite: sessionDomain ? "none" : "lax",
+        secure: sessionDomain ? true : false,
         httpOnly: false,
-        domain: "pollak.info",
+        domain: sessionDomain,
       });
       res.cookie("refresh_token", user.refresh_token, {
         maxAge: 24 * 60 * 60 * 1000,
-        httpOnly: false,
-        sameSite: "none",
+        sameSite: sessionDomain ? "none" : "lax",
+        secure: sessionDomain ? true : false,
         secure: true,
-        domain: "pollak.info",
+        domain: sessionDomain,
       });
 
       res.status(200).json(user);
