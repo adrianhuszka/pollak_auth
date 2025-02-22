@@ -1,0 +1,14 @@
+model APIKey {
+  id String @id @default(uuid())
+  name String
+  k  String @unique
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+
+  userGroupId String
+  userGroup   Groups @relation(fields: [userGroupId], references: [neve])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+}

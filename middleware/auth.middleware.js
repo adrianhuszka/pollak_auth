@@ -1,12 +1,16 @@
 import { PrismaClient } from "@prisma/client";
 import { jwtDecode } from "jwt-decode";
 import { verifyJwt } from "../services/auth.service.js";
-import session from "express-session";
+import { verifyApiKey } from "../services/api-key.service.js";
 
 const prisma = new PrismaClient();
 
 export function verifyUserGroups(groups = []) {
   return async (req, res, next) => {
+    if (req.headers["x-api-key"]) {
+      return verifyApiKeyMiddleware(groups, req, res, next);
+    }
+
     let access_token = req.cookies.access_token
       ? req.cookies.access_token
       : req.headers.Authorization;
@@ -33,14 +37,18 @@ export function verifyUserGroups(groups = []) {
     try {
       const data = await verifyJwt(access_token, refresh_token);
 
+      const sessionDomain = req.hostname.includes("pollak.info")
+        ? "pollak.info"
+        : undefined;
+
       if (data !== "OK" && data) {
         access_token = data;
         res.cookie("access_token", data, {
           maxAge: 24 * 60 * 60 * 1000,
-          sameSite: "none",
-          secure: true,
+          sameSite: sessionDomain ? "none" : "lax",
+          secure: sessionDomain ? true : false,
           httpOnly: false,
-          domain: "pollak.info",
+          domain: sessionDomain,
           path: "/",
         });
       }
@@ -91,4 +99,35 @@ export function verifyUserGroups(groups = []) {
 
     return res.status(403).json({ message: "Access Denied" });
   };
+}
+
+async function verifyApiKeyMiddleware(groups, req, res, next) {
+  const apiKey = req.headers["x-api-key"];
+
+  const verify = await verifyApiKey(apiKey);
+
+  if (!verify) return res.status(403).json({ message: "Access Denied" });
+
+  if (groups.includes(verify.userGroup.neve)) {
+    switch (req.method) {
+      case "GET":
+        if (verify.userGroup.read) return next();
+        break;
+      case "POST":
+        if (verify.userGroup.write) return next();
+        break;
+      case "PUT":
+        if (verify.userGroup.update) return next();
+        break;
+      case "DELETE":
+        if (verify.userGroup.delete) return next();
+        break;
+      case "OPTIONS":
+        return next();
+      default:
+        break;
+    }
+  }
+
+  return res.status(403).json({ message: "Access Denied" });
 }

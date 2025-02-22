@@ -17,4 +17,6 @@ model User {
 
   Groups     Groups @relation(fields: [groupsNeve], references: [neve])
   groupsNeve String
+
+  apiKeys APIKey[]
 }

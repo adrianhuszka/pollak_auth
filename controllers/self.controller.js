@@ -145,19 +145,23 @@ router.post("/mfa/verify", async (req, res) => {
   try {
     const data = await mfaVerify(userId, otp);
 
+    const sessionDomain = req.hostname.includes("pollak.info")
+      ? "pollak.info"
+      : undefined;
+
     res.cookie("access_token", data.access_token, {
       maxAge: 24 * 60 * 60 * 1000,
-      sameSite: "none",
-      secure: true,
+      sameSite: sessionDomain ? "none" : "lax",
+      secure: sessionDomain ? true : false,
       httpOnly: false,
-      domain: "pollak.info",
+      domain: sessionDomain,
     });
     res.cookie("refresh_token", data.refresh_token, {
       maxAge: 24 * 60 * 60 * 1000,
       httpOnly: false,
-      sameSite: "none",
-      secure: true,
-      domain: "pollak.info",
+      sameSite: sessionDomain ? "none" : "lax",
+      secure: sessionDomain ? true : false,
+      domain: sessionDomain,
     });
 
     res.status(200).json(data);

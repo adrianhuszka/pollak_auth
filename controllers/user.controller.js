@@ -7,6 +7,7 @@ import {
   GetAllUsers,
   Groups,
   getAllUsersById,
+  getUserByOm,
 } from "../services/user.service.js";
 
 const router = express.Router();
@@ -59,6 +60,16 @@ router.get("/getGroups", async (req, res) => {
     res.status(400).json(error.message);
   }
 });
+
+router.get("/getUserIdByOm/:om", async (req, res) => {
+  try {
+    const user = await getUserByOm(req.params.om);
+    res.status(200).json(user);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+});
+
 /*
 router.post("/send-email", async (req, res) => {
   try {

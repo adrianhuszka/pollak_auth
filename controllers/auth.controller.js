@@ -32,12 +32,16 @@ router.get("/verify", (req, res) => {
         if (data === "OK") {
           res.status(200).json({ message: "OK" });
         } else {
+          const sessionDomain = req.hostname.includes("pollak.info")
+            ? "pollak.info"
+            : undefined;
+
           res.cookie("access_token", data, {
             maxAge: 24 * 60 * 60 * 1000,
-            sameSite: "none",
-            secure: true,
+            sameSite: sessionDomain ? "none" : "lax",
+            secure: sessionDomain ? true : false,
             httpOnly: false,
-            domain: "pollak.info",
+            domain: sessionDomain,
             path: "/",
           });
           res.status(200).json({ message: "Refreshed", access_token: data });
@@ -117,7 +121,7 @@ router.post(
       // TODO: Handle MFA timeout and db flag
 
       if (user.isMfaRequired) {
-        req.session.user_id = user.user_id;
+        req.session.user_id = user.userId;
         return res.status(401).json({ message: "MFA szükséges!" });
       }
 
@@ -127,7 +131,7 @@ router.post(
           .json({ message: "Hibás felhasználó név vagy jelszó!" });
       }
 
-      req.session.user_id = user.user_id;
+      req.session.user_id = user.userId;
 
       if (user.isMfaRequired) {
         return res.status(401).json({ message: "MFA szükséges!" });
@@ -256,19 +260,23 @@ router.post("/googleAuth", async (req, res) => {
       return res.status(401).json({ message: message });
     }
 
+    const sessionDomain = req.hostname.includes("pollak.info")
+      ? "pollak.info"
+      : undefined;
+
     res.cookie("access_token", access_token, {
       maxAge: 24 * 60 * 60 * 1000,
-      sameSite: "none",
-      secure: true,
+      sameSite: sessionDomain ? "none" : "lax",
+      secure: sessionDomain ? true : false,
       httpOnly: false,
-      domain: "pollak.info",
+      domain: sessionDomain,
     });
     res.cookie("refresh_token", refresh_token, {
       maxAge: 24 * 60 * 60 * 1000,
       httpOnly: false,
-      sameSite: "none",
-      secure: true,
-      domain: "pollak.info",
+      sameSite: sessionDomain ? "none" : "lax",
+      secure: sessionDomain ? true : false,
+      domain: sessionDomain,
     });
 
     req.session.user_id = user.id;
@@ -295,20 +303,24 @@ router.post("/googleAuthAddOm", async (req, res) => {
       return res.status(401).json({ message: message });
     }
 
+    const sessionDomain = req.hostname.includes("pollak.info")
+      ? "pollak.info"
+      : undefined;
+
     res.cookie("access_token", access_token, {
       maxAge: 24 * 60 * 60 * 1000,
-      sameSite: "none",
-      secure: true,
+      sameSite: sessionDomain ? "none" : "lax",
+      secure: sessionDomain ? true : false,
       httpOnly: false,
-      domain: "pollak.info",
+      domain: sessionDomain,
       path: "/",
     });
     res.cookie("refresh_token", refresh_token, {
       maxAge: 24 * 60 * 60 * 1000,
       httpOnly: false,
-      sameSite: "none",
-      secure: true,
-      domain: "pollak.info",
+      sameSite: sessionDomain ? "none" : "lax",
+      secure: sessionDomain ? true : false,
+      domain: sessionDomain,
       path: "/",
     });
 

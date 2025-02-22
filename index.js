@@ -15,6 +15,7 @@ import { verifyUserGroups } from "./middleware/auth.middleware.js";
 import { jwtDecode } from "./lib/jwt.js";
 import { PrismaSessionStore } from "@quixo3/prisma-session-store";
 import { PrismaClient } from "@prisma/client";
+import apiKeyController from "./controllers/api-key.controller.js";
 
 const app = express();
 
@@ -48,7 +49,7 @@ const expressSession = session({
     httpOnly: true,
     secure: true,
     maxAge: 24 * 60 * 60 * 1000,
-    domain: "pollak.info",
+    domain: undefined,
     sameSite: "none",
   },
 });
@@ -56,7 +57,30 @@ const expressSession = session({
 app.use(cors(corsOptions));
 app.use(express.json());
 app.use(cookieParser());
-app.use(expressSession);
+
+app.use((req, res, next) => {
+  const sessionDomain = req.hostname.includes("pollak.info")
+    ? "pollak.info"
+    : undefined;
+
+  const expressSession = session({
+    name: "sid",
+    secret: "test",
+    resave: false,
+    saveUninitialized: true,
+    proxy: true,
+    store: expressSessionStore,
+    cookie: {
+      httpOnly: true,
+      secure: sessionDomain ? true : false,
+      maxAge: 24 * 60 * 60 * 1000,
+      domain: sessionDomain,
+      sameSite: sessionDomain ? "none" : "lax",
+    },
+  });
+
+  expressSession(req, res, next);
+});
 
 app.use((req, res, next) => {
   if (req.session) {
@@ -75,6 +99,8 @@ app.use("/self", selfController);
 app.use("/group", verifyUserGroups(["ADMIN"]), groupController);
 app.use("/om", verifyUserGroups(["ADMIN"]), omController);
 app.use("/session", verifyUserGroups(["ADMIN"]), sessionController);
+app.use("/apiKey", verifyUserGroups(["ADMIN", "USER"]), apiKeyController);
+
 app.use("/static", express.static("public"));
 
 app.get("/", async (req, res) => {

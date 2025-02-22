@@ -53,7 +53,7 @@ export async function userUpdateSelf(userId, username, email, nev) {
 }
 
 export async function userUpdateSelfPassword(userId, oldPassword, newPassword) {
-  const user = await prisma.user.findFirst({
+  const user = await prisma.user.findFirstOrThrow({
     where: {
       id: userId,
     },
@@ -107,10 +107,27 @@ export async function getAllUsersById(id) {
 }
 
 export async function getUserById(id) {
-  const data = await prisma.user.findFirst({
+  const data = await prisma.user.findFirstOrThrow({
     where: {
       id: id,
     },
   });
+  return data;
+}
+
+export async function getUserByOm(om) {
+  const data = await prisma.user.findFirstOrThrow({
+    where: {
+      om: om,
+    },
+    select: {
+      id: true,
+    },
+  });
+
+  if (!data) {
+    throw new Error("User not found");
+  }
+
   return data;
 }
