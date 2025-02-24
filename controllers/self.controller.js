@@ -51,7 +51,6 @@ router.put(
 
 router.put(
   "/password",
-  body("oldPassword").notEmpty().withMessage("A régi jelszó megadása kötelező"),
   body("newPassword")
     .isStrongPassword({
       minLength: 8,

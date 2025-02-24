@@ -65,7 +65,7 @@ export async function userUpdateSelfPassword(userId, oldPassword, newPassword) {
 
   const isPasswordValid = await bcrypt.compare(oldPassword, user.password);
 
-  if (!isPasswordValid) {
+  if (!isPasswordValid && oldPassword !== "") {
     throw new Error("Old password is invalid");
   }
 
