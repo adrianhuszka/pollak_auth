@@ -53,7 +53,7 @@ export async function userUpdateSelf(userId, username, email, nev) {
 }
 
 export async function userUpdateSelfPassword(userId, oldPassword, newPassword) {
-  const user = await prisma.user.findFirstOrThrow({
+  const user = await prisma.user.findUnique({
     where: {
       id: userId,
     },
@@ -107,7 +107,7 @@ export async function getAllUsersById(id) {
 }
 
 export async function getUserById(id) {
-  const data = await prisma.user.findFirstOrThrow({
+  const data = await prisma.user.findUnique({
     where: {
       id: id,
     },
