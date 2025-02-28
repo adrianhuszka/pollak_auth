@@ -145,6 +145,7 @@ export async function login(username, password) {
     {
       sub: user.id,
       name: user.nev,
+      username: user.username,
       email: user.email,
       userGroup: user.groupsNeve,
       om: user.om,
