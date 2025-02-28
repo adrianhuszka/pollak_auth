@@ -265,13 +265,13 @@ export async function mfaSetup(userId) {
   const qrImageUrl = await qrCode.toDataURL(url);
 
   return {
-    secret: secret.base32,
+    // secret: secret.base32,
     qrCode: qrImageUrl,
   };
 }
 
 export async function mfaVerify(userId, otp) {
-  const user = await prisma.user.findFirst({
+  const user = await prisma.user.findUnique({
     where: {
       id: userId,
     },
