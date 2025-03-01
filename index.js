@@ -93,7 +93,7 @@ app.use((req, res, next) => {
 
 app.set("view engine", "ejs");
 
-app.use("/user", verifyUserGroups(["ADMIN", "USER"]), userController);
+app.use("/user", verifyUserGroups(["ADMIN"]), userController);
 app.use("/auth", authController);
 app.use("/self", selfController);
 app.use("/group", verifyUserGroups(["ADMIN"]), groupController);
