@@ -59,7 +59,7 @@ router.put(
       minNumbers: 1,
     })
     .withMessage(
-      "A jelszónak legalább 8 karakter hosszúnak kell lennie, legalább 1 kisbetűt, 1 nagybetűt és 1 számot kell tartalmaznia"
+      "A jelszónak legalább 8 karakter hosszúnak kell lennie és legalább 1 kisbetűt, 1 nagybetűt, 1 számot kell és 1 speciális karaktert kell tartalmaznia"
     ),
   body("newPassword2")
     .custom((value, { req }) => {
