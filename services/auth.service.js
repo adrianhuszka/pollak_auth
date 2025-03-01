@@ -353,7 +353,7 @@ export async function mfaReset(userId, otp) {
     await prisma.user.update({
       where: { id: userId },
       data: {
-        MFASecret: null,
+        mfaSecret: null,
         isMFAEnabled: false,
       },
     });
