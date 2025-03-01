@@ -120,10 +120,6 @@ export async function getUserById(id) {
     where: {
       id: id,
     },
-    include: {
-      Groups: true,
-      om_azon: true,
-    },
   });
   return data;
 }
