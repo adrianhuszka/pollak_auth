@@ -1,5 +1,5 @@
 import express from "express";
-import { body, validationResult } from "express-validator";
+import { body, header, validationResult } from "express-validator";
 import { generateKey, verifyApiKey } from "../services/api-key.service.js";
 
 const router = express.Router();
@@ -29,9 +29,12 @@ router.post(
 
 router.post(
   "/verify",
-  body("key").isString().isLength({ min: 3 }).withMessage("Invalid key"),
+  header("x-api-key")
+    .isString()
+    .isLength({ min: 3 })
+    .withMessage("Invalid API Key"),
   async (req, res) => {
-    const { key } = req.body;
+    const { key } = req.headers["x-api-key"];
 
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
