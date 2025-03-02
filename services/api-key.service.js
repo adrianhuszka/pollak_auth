@@ -38,8 +38,11 @@ export async function verifyApiKey(key) {
     },
   });
 
+  console.log(apiKey);
+
   if (!apiKey) {
-    throw new Error("Invalid API Key");
+    console.error("Invalid API Key");
+    return null;
   }
 
   return apiKey;

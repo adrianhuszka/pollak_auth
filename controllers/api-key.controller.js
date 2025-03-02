@@ -43,6 +43,9 @@ router.post(
 
     try {
       const apiKey = await verifyApiKey(key);
+
+      if (!apiKey) return res.status(403).json({ message: "Access Denied" });
+
       res.status(200).json(apiKey);
     } catch (error) {
       res.status(400).json({ message: error.message });
