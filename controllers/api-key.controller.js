@@ -34,7 +34,7 @@ router.post(
     .isLength({ min: 3 })
     .withMessage("Invalid API Key"),
   async (req, res) => {
-    const { key } = req.headers["x-api-key"];
+    const key = req.headers["x-api-key"];
 
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
