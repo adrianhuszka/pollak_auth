@@ -33,7 +33,7 @@ jobs:
           platforms: linux/amd64
           file: ./Dockerfile
           push: true
-          tags: ghcr.io/pollak-projects/pollak_auth/app:latest
+          tags: ghcr.io/adrianhuszka/pollak_auth/app:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
