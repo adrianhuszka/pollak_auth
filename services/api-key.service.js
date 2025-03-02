@@ -38,7 +38,7 @@ export async function verifyApiKey(key) {
     },
   });
 
-  console.log(apiKey);
+  console.log("In verifyApiKey service", apiKey);
 
   if (!apiKey) {
     console.error("Invalid API Key");
